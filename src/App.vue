@@ -6,6 +6,7 @@
   <div>
     <!-- Sidebar -->
     <Navbar />
+    <AccountsOverview />
 
     <!-- Page content -->
     <div class="content">
@@ -15,11 +16,13 @@
 </template>
 
 <script>
-  import Navbar from "@/components/EmployeeNavbar.vue";
+import Navbar from "@/components/EmployeeNavbar.vue";
+import AccountsOverview from "@/components/AccountsOverview.vue";
 
   export default {
     components: {
-      Navbar
+      Navbar,
+      AccountsOverview
     }
   }
 </script>
