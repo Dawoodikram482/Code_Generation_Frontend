@@ -6,7 +6,6 @@
   <div>
     <!-- Sidebar -->
     <Navbar />
-
     <!-- Page content -->
     <div class="content">
       <router-view></router-view>
@@ -15,7 +14,8 @@
 </template>
 
 <script>
-  import Navbar from "@/components/Navbar.vue";
+import Navbar from "@/components/EmployeeNavbar.vue";
+
 
   export default {
     components: {
@@ -26,7 +26,7 @@
 
 <style scoped>
   .content {
-    margin-left: 250px;
+    margin-left: 100px;
     padding: 20px;
   }
 </style>
