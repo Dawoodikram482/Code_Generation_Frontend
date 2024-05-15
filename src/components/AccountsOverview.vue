@@ -134,20 +134,16 @@ export default {
 </script>
 
 <style scoped>
-.table-responsive{
-  left: 0;
-  padding-top: 50px;
-}
+
 h2{
   color: #008773;
   font-family: serif;
 }
 #content {
   flex: 1;
-  padding: 30px;
+  padding: 10px;
   display: flex;
-  margin-left: 50px;
-
+  margin-left: 0;
 }
 
 table {
@@ -157,7 +153,6 @@ table {
 
 th, td {
   padding: 10px;
-
   text-align: left;
 }
 
@@ -208,6 +203,7 @@ tr:hover .dropdown-menu {
 }
 
 .table-container {
+  margin-left: 0;
   width: 500px;
 }
 
@@ -245,7 +241,6 @@ tr:hover .dropdown-menu {
 }
 
 .transaction-secondrow:hover {
-  cursor: pointer;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgb(9, 0, 0); /* Shadow effect on hover */
 }

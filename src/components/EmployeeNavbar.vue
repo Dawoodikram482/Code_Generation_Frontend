@@ -20,9 +20,9 @@ export default {
   data() {
     return {
       sidebarItems: [
-        {icon: '<i class="fa-solid fa-house-chimney"></i>', label: 'Accounts Overview', route: '/'},
+        {icon: '<i class="fa-solid fa-house-chimney"></i>', label: 'Accounts Overview', route: '/accountsOverview'},
         {icon: '<i class="fa-solid fa-clock-rotate-left"></i>', label: 'Transaction History', route: '/transactions'},
-        {icon: '<i class="fa-solid fa-arrow-right-arrow-left"></i>', label: 'Transfer Funds', route: '/transfer'},
+        {icon: '<i class="fa-solid fa-arrow-right-arrow-left"></i>', label: 'Transfer Funds', route: '/transferFunds'},
         {icon: '<i class="fa-solid fa-hourglass-half"></i>', label: 'Pending Approvals', route: '/approval'},
       ],
     }

@@ -6,8 +6,6 @@
   <div>
     <!-- Sidebar -->
     <Navbar />
-    <AccountsOverview />
-
     <!-- Page content -->
     <div class="content">
       <router-view></router-view>
@@ -17,19 +15,18 @@
 
 <script>
 import Navbar from "@/components/EmployeeNavbar.vue";
-import AccountsOverview from "@/components/AccountsOverview.vue";
+
 
   export default {
     components: {
-      Navbar,
-      AccountsOverview
+      Navbar
     }
   }
 </script>
 
 <style scoped>
   .content {
-    margin-left: 250px;
+    margin-left: 100px;
     padding: 20px;
   }
 </style>
