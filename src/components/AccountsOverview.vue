@@ -2,25 +2,30 @@
   <div class="table-responsive">
   <div class="table-responsive-sm">
     <h2>Accounts Overview</h2>
+    <div v-if="loading">Loading...</div>
+    <div v-if="error">{{ error }}</div>
+    <div v-if="accounts.length"></div>
     <div id="content">
       <div class="table-container">
         <table>
           <thead>
           <tr>
-            <th>Name</th>
             <th>IBAN</th>
-            <th>Registration Date</th>
+            <th>Account Type</th>
+            <th>Customer Name</th>
+            <th>Customer Email</th>
           </tr>
           </thead>
           <tbody>
-          <tr v-for="(person, index) in people" :key="index"
+          <tr v-for="account in accounts" :key="account.iban"
               :class="{ 'even-row': index % 2 === 0, 'odd-row': index % 2 !== 0 }">
-            <td style="width: 200px">{{ person.name }}</td>
-            <td>{{ person.iban }}</td>
-            <td>{{ person.registrationDate }}</td>
+            <td>{{ account.iban }}</td>
+            <td>{{ account.accountType }}</td>
+            <td>{{ account.customer.firstName }} {{ account.customer.lastName }}</td>
+            <td>{{ account.customer.email }}</td>
             <div class="dropdown-menu">
-              <a href="#" @click.prevent="showUserDetails(person)">User Details</a>
-              <a href="#" @click.prevent="viewTransactions(person)">View Transactions</a>
+              <a href="#" @click.prevent="showUserDetails(account)">User Details</a>
+              <a href="#" @click.prevent="viewTransactions(account)">View Transactions</a>
             </div>
           </tr>
           </tbody>
@@ -31,10 +36,9 @@
       <div v-if="selectedUser && !transactionData" class="user-details">
         <div>
           <h2>User Details</h2>
-          <p>Name: {{ selectedUser.name }}</p>
+          <p>Name: {{ selectedUser.customer.firstName }} {{ selectedUser.customer.lastName }} </p>
           <p>IBAN: {{ selectedUser.iban }}</p>
-          <p>Registration Date: {{ selectedUser.registrationDate }}</p>
-          <p>Age: {{ selectedUser.age }}</p>
+          <p>DOB: {{selectedUser.customer.dateOfBirth }}</p>
         </div>
         <div class="editAndCloseUser">
           <a class="btn btn-primary" href="#">Edit</a>
@@ -69,67 +73,87 @@
 </div>
 </template>
 
+<!--<script>-->
+<!--export default {-->
+<!--  data() {-->
+<!--    return {-->
+<!--      people: [-->
+<!--        {name: 'John Doe', iban: 'NL02ABNA0123456789', registrationDate: '2023-01-15', age: 10, transactions: [-->
+<!--            { date: '2024-05-01', description: 'Salary Deposit', amount: 2500},-->
+<!--            { date: '2024-05-01', description: 'Deposit', amount: 2500 },-->
+<!--            { date: '2024-04-28', description: 'Grocery Shopping', amount: -150 },-->
+<!--            { date: '2024-04-20', description: 'Utility Bill Payment', amount: -100 },-->
+<!--          ],-->
+<!--        },-->
+
+
+<!--      selectedUser: null,-->
+<!--      transactionData: null,-->
+<!--    };-->
+<!--  },-->
+<!--  methods: {-->
+<!--    showUserDetails(user) {-->
+<!--      this.selectedUser = user;-->
+<!--      this.transactionData = false;-->
+<!--      // Scroll to the top of the page-->
+<!--      window.scrollTo({ top: 0, behavior: 'smooth' });-->
+<!--    },-->
+<!--    viewTransactions(user) {-->
+<!--      // Assuming transactions are stored in the user object-->
+<!--      this.selectedUser = user;-->
+<!--      this.transactionData = user.transactions;-->
+<!--      window.scrollTo({ top: 0, behavior: 'smooth' });-->
+<!--    },-->
+<!--  }-->
+<!--};-->
+<!--</script>-->
 <script>
+import axiosInstance from '/axios.js';
+
 export default {
   data() {
     return {
-      people: [
-        {name: 'John Doe', iban: 'NL02ABNA0123456789', registrationDate: '2023-01-15', age: 10, transactions: [
-            { date: '2024-05-01', description: 'Salary Deposit', amount: 2500},
-            { date: '2024-05-01', description: 'Deposit', amount: 2500 },
-            { date: '2024-04-28', description: 'Grocery Shopping', amount: -150 },
-            { date: '2024-04-20', description: 'Utility Bill Payment', amount: -100 },
-          ],
-        },
-        {name: 'Jane Smith', iban: 'NL91ABNA0417164300', registrationDate: '2022-09-28', transactions: []},
-        {name: 'Bob Johnson', iban: 'NL59RABO0123456789', registrationDate: '2023-03-10'},
-        {name: 'Alice Brown', iban: 'NL86INGB0002445588', registrationDate: '2022-11-05'},
-        {name: 'Michael Lee', iban: 'NL22SNSB0123456789', registrationDate: '2023-05-20'},
-        {name: 'John Doe', iban: 'NL02ABNA0123456789', registrationDate: '2023-01-15', age: 10},
-        {name: 'Jane Smith', iban: 'NL91ABNA0417164300', registrationDate: '2022-09-28'},
-        {name: 'Dipika', iban: 'NL59RABO0123456789', registrationDate: '2023-03-10', transactions: [
-            { date: '2024-05-03', description: 'Transfer from John Doe', amount: 200 },
-            { date: '2024-04-30', description: 'Restaurant Dinner', amount: -50 },
-            { date: '2024-04-25', description: 'Online Shopping', amount: -120 },
-          ],
-        },
-        {name: 'Alice Brown', iban: 'NL86INGB0002445588', registrationDate: '2022-11-05'},
-        {name: 'Michael Lee', iban: 'NL22SNSB0123456789', registrationDate: '2023-05-20'},
-        {name: 'John Doe', iban: 'NL02ABNA0123456789', registrationDate: '2023-01-15', age: 10},
-        {name: 'Jane Smith', iban: 'NL91ABNA0417164300', registrationDate: '2022-09-28'},
-        {name: 'Bob Johnson', iban: 'NL59RABO0123456789', registrationDate: '2023-03-10'},
-        {name: 'Alice Brown', iban: 'NL86INGB0002445588', registrationDate: '2022-11-05'},
-        {name: 'Michael Lee', iban: 'NL22SNSB0123456789', registrationDate: '2023-05-20'},
-        {name: 'John Doe', iban: 'NL02ABNA0123456789', registrationDate: '2023-01-15', age: 10},
-        {name: 'Jane Smith', iban: 'NL91ABNA0417164300', registrationDate: '2022-09-28'},
-        {name: 'Bob Johnson', iban: 'NL59RABO0123456789', registrationDate: '2023-03-10'},
-        {name: 'Alice Brown', iban: 'NL86INGB0002445588', registrationDate: '2022-11-05'},
-        {name: 'Michael Lee', iban: 'NL22SNSB0123456789', registrationDate: '2023-05-20'},
-        {name: 'John Doe', iban: 'NL02ABNA0123456789', registrationDate: '2023-01-15', age: 10},
-        {name: 'Jane Smith', iban: 'NL91ABNA0417164300', registrationDate: '2022-09-28'},
-        {name: 'Bob Johnson', iban: 'NL59RABO0123456789', registrationDate: '2023-03-10'},
-        {name: 'Alice Brown', iban: 'NL86INGB0002445588', registrationDate: '2022-11-05'},
-        {name: 'Michael Lee', iban: 'NL22SNSB0123456789', registrationDate: '2023-05-20'}
-      ],
-
-      selectedUser: null,
-      transactionData: null,
+      accounts: [],
+          selectedUser: null,
+        transactionData: null,
+      loading: true,
+      error: null
     };
   },
+  created() {
+    this.fetchAccounts();
+  },
   methods: {
-    showUserDetails(user) {
-      this.selectedUser = user;
+    fetchAccounts() {
+      axiosInstance.get(`/accounts`, {
+        params: {
+          limit: 50,
+          offset: 0
+
+        }
+      })
+          .then(response => {
+            this.accounts = response.data;
+            this.loading = false;
+          })
+          .catch(error => {
+            this.error = error.message;
+            this.loading = false;
+          });
+    },
+    showUserDetails(account) {
+      this.selectedUser = account;
       this.transactionData = false;
       // Scroll to the top of the page
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
-    viewTransactions(user) {
+    viewTransactions(account) {
       // Assuming transactions are stored in the user object
-      this.selectedUser = user;
-      this.transactionData = user.transactions;
+      this.selectedUser = account;
+      this.transactionData = account.transactions;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
-  }
+  },
 };
 </script>
 
@@ -204,7 +228,7 @@ tr:hover .dropdown-menu {
 
 .table-container {
   margin-left: 0;
-  width: 500px;
+  width: 100%;
 }
 
 .user-details, .transaction-history{
