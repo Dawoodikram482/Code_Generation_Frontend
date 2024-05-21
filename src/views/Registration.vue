@@ -23,12 +23,12 @@
                 <label class="form-label" for="inputEmail">Email</label>
               </div>
 
-              <div class="form-group">
+              <div class="form-outline form-white mb-4">
                 <div class="input-group">
                   <input type="password" v-model="password" class="form-control" id="inputPassword" />
                   <div class="input-group-append">
-                    <button type="button" class="btn btn-secondary ml-2" @click="togglePassword"
-                      id="passwordToggleButton">
+                    <button class="btn btn-primary w-100" disabled type="button" v-if="loading">
+                    <span aria-hidden="true" class="spinner-grow spinner-grow-sm" role="status"></span>
                       Show password
                     </button>
                   </div>
@@ -36,7 +36,7 @@
                 <label for="inputPassword" class="form-control-label">Password</label>
               </div>
 
-              <div class="form-group">
+              <div class="form-outline form-white mb-4">
                 <div class="input-group">
                   <input type="password" v-model="confirmPassword" class="form-control" id="inputConfirmPassword" />
                 </div>
