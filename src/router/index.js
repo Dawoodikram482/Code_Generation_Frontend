@@ -1,8 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import Login from '../views/Login.vue'
+import Registration from '../views/Registration.vue'
 import AccountsOverview from "@/components/AccountsOverview.vue";
 import TransferFunds from "@/components/TransferFunds.vue";
 import PendingApprovals from "@/components/PendingApprovals.vue";
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -10,6 +14,16 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/registration',
+      name: 'registrationn',
+      component: Registration
     },
     {
       path: '/about',
@@ -34,6 +48,7 @@ const router = createRouter({
       name: 'Pending Approvals',
       component: PendingApprovals
     }
+    
   ]
 })
 
