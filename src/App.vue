@@ -16,7 +16,6 @@
 <script>
 import Navbar from "@/components/EmployeeNavbar.vue";
 
-
   export default {
     components: {
       Navbar
