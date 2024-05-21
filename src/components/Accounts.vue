@@ -1,6 +1,11 @@
 <template>
   <div>
     <h1>Accounts</h1>
+    <select v-model="selectedRole" @change="filterAccounts">
+      <option value="">All Users</option>
+      <option value="ROLE_EMPLOYEE">Employees</option>
+      <option value="ROLE_CUSTOMER">Customers</option>
+    </select>
     <div v-if="loading">Loading...</div>
     <div v-if="error">{{ error }}</div>
     <div v-if="accounts.length">
@@ -14,7 +19,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="account in accounts" :key="account.iban">
+        <tr v-for="account in filteredAccounts" :key="account.iban">
           <td>{{ account.iban }}</td>
           <td>{{ account.accountType }}</td>
           <td>{{ account.customer.firstName }} {{ account.customer.lastName }}</td>
@@ -40,13 +45,22 @@ export default {
   created() {
     this.fetchAccounts();
   },
+  computed: {
+    // Filtered accounts based on selected user role
+    filteredAccounts() {
+      if (!this.selectedRole) {
+        return this.accounts; // Return all accounts if no filter selected
+      } else {
+        return this.accounts.filter(account => account.customer.roles.includes(this.selectedRole));
+      }
+    }
+  },
   methods: {
     fetchAccounts() {
       axiosInstance.get(`/accounts`, {
         params: {
           limit: 50,
           offset: 0
-
         }
       })
           .then(response => {
@@ -57,6 +71,9 @@ export default {
             this.error = error.message;
             this.loading = false;
           });
+    },
+    filterAccounts(){
+      this.fetchAccounts();
     }
   }
 };
