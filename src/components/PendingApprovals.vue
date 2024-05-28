@@ -47,11 +47,11 @@ export default {
   methods: {
     fetchPendingApprovals() {
       axiosInstance
-          .get('/users', {
+          .get('/users/pending-approvals', {
             params: {
               limit: 50,
               offset: 0,
-              roles: 'ROLE_NEWUSER'
+
             }
           })
           .then(response => {
