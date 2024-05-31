@@ -6,6 +6,7 @@
         <div class="col-12 col-md-8 col-lg-6 col-xl-5">
           <div class="card-body p-5 text-center">
             <div class="mb-md-5 mt-md-4 pb-5">
+              <img src="/logo.png" alt="Logo" class="logo mb-4" />
               <h2 class="fw-bold mb-4 text-uppercase">Register</h2>
 
               <div class="form-outline form-white mb-4">
@@ -63,7 +64,7 @@
             </div>
 
             <div>
-              <p class="mb-0">Already have an account? <a @click="login" class="text-white-50 fw-bold">Log In</a></p>
+              <p class="mb-0">Already have an account? <a @click="login" class="text-blue-50 fw-bold">Log In</a></p>
             </div>
           </div>
         </div>
@@ -142,9 +143,19 @@ export default {
 body, #app {
   display: block;
 }
+.logo {
+  width: 200px; /* Set the width of the logo */
+  height: auto; /* Maintain the aspect ratio */
+}
+.login-container img {
+        display: block;
+        width: 20%;
+        margin: 0 auto;
+        position:right;
+    }
 
 .card-body {
-  background-color: #fff;
+  background-color: #adb4b6;
   border-radius: 1rem;
 }
 
