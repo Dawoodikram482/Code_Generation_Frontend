@@ -9,72 +9,70 @@
       </select>
       <div v-if="loading">Loading...</div>
       <div v-if="error">{{ error }}</div>
-      <div v-if="accounts.length"></div>
-      <div id="content">
-        <div class="table-and-details">
-          <div class="table-container">
-            <table>
-              <thead>
-              <tr>
-                <th>IBAN</th>
-                <th>Account Type</th>
-                <th>Customer Name</th>
-                <th>Customer Email</th>
-
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="(account, index) in filteredAccounts" :key="account.iban"
-                  :class="{ 'even-row': index % 2 === 0, 'odd-row': index % 2 !== 0 }">
-                <td>{{ account.iban }}</td>
-                <td>{{ account.accountType }}</td>
-                <td>{{ account.customer.firstName }} {{ account.customer.lastName }}</td>
-                <td>{{ account.customer.email }}</td>
-
-                  <div class="dropdown-menu">
-                    <a href="#" @click.prevent="showUserDetails(account)">User Details</a>
-                    <a href="#" @click.prevent="viewTransactions(account)">View Transactions</a>
-                  </div>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- User Details Form -->
-          <div v-if="selectedUser && !transactionData" class="user-details">
-            <div>
+      <div v-if="accounts.length">
+        <div id="content">
+          <div class="table-and-details">
+            <div class="table-container">
+              <table>
+                <thead>
+                <tr>
+                  <th>IBAN</th>
+                  <th>Account Type</th>
+                  <th>Customer Name</th>
+                  <th>Customer Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(account, index) in filteredAccounts" :key="account.iban"
+                    :class="{ 'even-row': index % 2 === 0, 'odd-row': index % 2 !== 0 }">
+                  <td>{{ account.iban }}</td>
+                  <td>{{ account.accountType }}</td>
+                  <td>{{ account.customer?.firstName }} {{ account.customer?.lastName }}</td>
+                  <td>{{ account.customer?.email }}</td>
+                  <td>
+                    <div class="dropdown-menu">
+                      <a href="#" @click.prevent="showUserDetails(account)">User Details</a>
+                      <a href="#" @click.prevent="viewTransactions(account)">View Transactions</a>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div v-if="selectedUser && !transactionData" class="user-details">
               <h2>User Details</h2>
-              <p>Name: {{ selectedUser.customer.firstName }} {{ selectedUser.customer.lastName }}</p>
+              <p>Name: {{ selectedUser.customer?.firstName }} {{ selectedUser.customer?.lastName }}</p>
               <p>IBAN: {{ selectedUser.iban }}</p>
-              <p>DOB: {{ selectedUser.customer.dateOfBirth }}</p>
+              <p>DOB: {{ selectedUser.customer?.dateOfBirth }}</p>
+              <div class="editAndCloseUser">
+                <a class="btn btn-primary" href="#">Edit</a>
+                <a class="btn btn-danger" href="#">Close Account</a>
+              </div>
             </div>
-            <div class="editAndCloseUser">
-              <a class="btn btn-primary" href="#">Edit</a>
-              <a class="btn btn-danger" href="#">Close Account</a>
-            </div>
-          </div>
-
-          <!-- Transaction History -->
-          <div v-if="transactionData" class="transaction-history">
-            <h2>Transaction History Of {{ selectedUser.customer.firstName }} {{ selectedUser.customer.lastName }}</h2>
-            <ul class="list-unstyled">
-              <li v-for="(transaction, index) in selectedUser.transactions" :key="index">
-                <template v-if="index === 0 || transaction.date !== selectedUser.transactions[index - 1].date">
+            <div v-if="transactionData" class="transaction-history">
+              <h2>Transaction History Of {{ selectedUser.customer?.firstName }} {{ selectedUser.customer?.lastName }}</h2>
+              <ul class="list-unstyled">
+                <li v-for="(transaction, index) in transactionData" :key="index">
+                  <template v-if="index === 0 || transaction.date !== transactionData[index - 1].date">
+                    <div class="transaction-item">
+                      <div class="transaction-firstrow" style="font-weight: bold; color: #008773;">
+                        <div class="transaction-date">{{ transaction.date }}</div>
+                        <div class="euro-symbol">€</div>
+                      </div>
+                    </div>
+                  </template>
                   <div class="transaction-item">
-                    <div class="transaction-firstrow" style="font-weight: bold; color: #008773;">
-                      <div class="transaction-date">{{ transaction.date }}</div>
-                      <div class="euro-symbol">€</div>
+                    <div class="transaction-secondrow">
+                      <div class="transaction-description">
+                        From: {{ transaction.accountFrom.user }} ({{ transaction.accountFrom.iban }})
+                        To: {{ transaction.accountTo.user }} ({{ transaction.accountTo.iban }})
+                      </div>
+                      <div class="transaction-amount">{{ transaction.amount }}</div>
                     </div>
                   </div>
-                </template>
-                <div class="transaction-item">
-                  <div class="transaction-secondrow">
-                    <div class="transaction-description">{{ transaction.description }}</div>
-                    <div class="transaction-amount">{{ transaction.amount }}</div>
-                  </div>
-                </div>
-              </li>
-            </ul>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -84,42 +82,43 @@
 
 <script>
 import axiosInstance from '/axios.js';
+import axios from 'axios';
 
 export default {
   data() {
     return {
       accounts: [],
+      transactions: [],
       selectedUser: null,
       transactionData: null,
       loading: true,
-      error: null
+      error: null,
+      selectedRole: ''
     };
   },
   created() {
-    this.fetchAccounts();
+    this.fetchAccountsAndTransactions();
   },
   computed: {
-    // Filtered accounts based on selected user role
     filteredAccounts() {
       if (!this.selectedRole) {
-        return this.accounts; // Return all accounts if no filter selected
+        return this.accounts;
       } else {
-        return this.accounts.filter(account => account.customer.roles.includes(this.selectedRole));
+        return this.accounts.filter(account => account.customer?.roles.includes(this.selectedRole));
       }
     }
   },
   methods: {
-    fetchAccounts() {
-      axiosInstance.get('/accounts', {
-        params: {
-          limit: 50,
-          offset: 0
-        }
-      })
-          .then(response => {
-            this.accounts = response.data;
+    fetchAccountsAndTransactions() {
+      axios.all([
+        axiosInstance.get('/accounts', { params: { limit: 50, offset: 0 } }),
+        axiosInstance.get('/transactions')
+      ])
+          .then(axios.spread((accountsResponse, transactionsResponse) => {
+            this.accounts = accountsResponse.data;
+            this.transactions = transactionsResponse.data;
             this.loading = false;
-          })
+          }))
           .catch(error => {
             this.error = error.message;
             this.loading = false;
@@ -127,23 +126,23 @@ export default {
     },
     showUserDetails(account) {
       this.selectedUser = account;
-      this.transactionData = false;
-      // Scroll to the top of the page
+      this.transactionData = null;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
-
     viewTransactions(account) {
-      // Assuming transactions are stored in the user object
       this.selectedUser = account;
-      this.transactionData = account.transactions;
+      this.transactionData = this.transactions.filter(transaction =>
+          transaction.accountFrom.iban === account.iban || transaction.accountTo.iban === account.iban
+      );
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     filterAccounts() {
-      this.fetchAccounts();
+      this.fetchAccountsAndTransactions();
     }
   }
 };
 </script>
+
 
 <style scoped>
 h2 {
