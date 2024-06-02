@@ -5,7 +5,7 @@
     <div class="alert alert-danger" role="alert" v-if="invalidLogin">
       Invalid Email or Password
     </div>
-    <form v-on:submit.prevent="login" class="login-form">
+    <form @submit.prevent="login" class="login-form">
       <div class="form-group mt-2">
         <label>Email:</label>
         <input class="form-control" type="email" v-model="email"/>
@@ -15,76 +15,91 @@
         <input class="form-control" type="password" v-model="password"/>
       </div>
       <div class="form-group mt-2">
-        <button class="btn btn-primary w-100" disabled type="button" v-if="loading">
-          <span aria-hidden="true" class="spinner-grow spinner-grow-sm" role="status"></span>
-          Login
+        <button class="btn btn-primary w-100" :disabled="loading" type="submit">
+          <span v-if="loading" class="spinner-grow spinner-grow-sm" role="status"></span>
+          {{ loading ? 'Logging in...' : 'Login' }}
         </button>
-        <button class="btn btn-primary w-100 mt-2" type="submit" v-else>Login</button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
-import {useUserSessionStore} from "@/stores/UserSession.js";
+import { useUserSessionStore } from "@/stores/UserSession";
+import { Notify } from 'quasar';
 
 export default {
   name: "Login",
   setup() {
+    const userSessionStore = useUserSessionStore();
+
     return {
-      userSessionStore: useUserSessionStore(),
-    };
-  },
-  data() {
-    return {
+      userSessionStore,
       email: "",
       password: "",
-    }
+      loading: false,
+      invalidLogin: false
+    };
   },
   methods: {
-    login(){
-      this.userSessionStore.login(this.email, this.password)
-          .then(() => {
-            this.$q.notify({
-              color: 'positive',
-              position: 'top',
-              message: 'Login successful',
-              icon: 'check'
-            });
-            this.$router.push("/accountsOverview");
-          })
-          .catch((error) => {
-            if(error.response){
-              this.$q.notify({
-                color: 'negative',
-                position: 'top',
-                message: error.response.data.message,
-                icon: 'warning'
-              });
-            }
-            else {
-              this.$q.notify({
-                color: 'negative',
-                position: 'top',
-                message: 'An error occurred',
-                icon: 'warning'
-              });
-            }
-            console.log(error);
+    async login() {
+      this.loading = true;
+      try {
+        await this.userSessionStore.login(this.email, this.password);
+        this.invalidLogin = false; // Reset invalid login state
+        Notify.create({
+          color: 'positive',
+          position: 'top',
+          message: 'Login successful'
+        });
+        // Determine the route based on user role
+        let route = "/";
+        switch (this.userSessionStore.role) {
+          case 'ROLE_EMPLOYEE':
+            route = "/accountsOverview";
+            break;
+          case 'ROLE_CUSTOMER':
+            route = "/registration";
+            break;
+            // Add more cases for other roles if needed
+          default:
+            route = "/";
+        }
+
+        // Redirect to the determined route
+        this.$router.push(route);
+      } catch (error) {
+        this.invalidLogin = true;
+        if (error.response) {
+          Notify.create({
+            color: 'negative',
+            position: 'top',
+            message: error.response.data.message,
+            icon: 'warning'
           });
+        } else {
+          Notify.create({
+            color: 'negative',
+            position: 'top',
+            message: 'An error occurred',
+            icon: 'warning'
+          });
+        }
+        console.error(error);
+      } finally {
+        this.loading = false;
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-
 .container.login-container {
   height: 100%;
   width: 100%;
   background-color: aquamarine;
 }
-
 
 .login-form {
   max-width: 400px; /* Set the maximum width for the form */
