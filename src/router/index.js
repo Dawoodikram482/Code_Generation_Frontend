@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import Login from '../components/Authentication/Login.vue'
 import Registration from '../components/Authentication/Registration.vue'
 import AccountsOverview from "@/components/AccountsOverview.vue";
-import TransferFunds from "@/components/TransferFunds.vue";
+import TransferFunds from "@/components/transactions/TransferFunds.vue";
 import PendingApprovals from "@/components/PendingApprovals.vue";
 
 

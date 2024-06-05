@@ -47,7 +47,7 @@
 
 
 <script>
-import instance from "../../axios.js";
+import instance from "../../../axios.js";
 
 export default {
   data() {

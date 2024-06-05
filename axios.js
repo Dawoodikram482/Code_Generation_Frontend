@@ -4,16 +4,14 @@ const instance = axios.create({
 });
 
 // Add an interceptor to include authentication tokens
-// instance.interceptors.request.use(
-//     config => {
-//         const token = sessionStorage.getItem('jwt'); // Get the JWT token from sessionStorage
-//         if (token) {
-//             config.headers.Authorization = `Bearer ${token}`; // Set the Authorization header
-//         }
-//         return config;
-//     },
-//     error => {
-//         return Promise.reject(error);
-//     }
-// );
+instance.interceptors.request.use(function (config) {
+    const authToken = localStorage.getItem('jwt');
+    console.log("Auth Token:", authToken);
+    if (authToken) {
+        config.headers.Authorization = `Bearer ${authToken}`;
+    }
+    return config;
+}, function (error) {
+    return Promise.reject(error);
+});
 export default instance;
