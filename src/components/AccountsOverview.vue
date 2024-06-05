@@ -44,6 +44,7 @@
               <p>Name: {{ selectedUser.customer?.firstName }} {{ selectedUser.customer?.lastName }}</p>
               <p>IBAN: {{ selectedUser.iban }}</p>
               <p>DOB: {{ selectedUser.customer?.dateOfBirth }}</p>
+              <p>Account Balance: {{selectedUser.accountBalance}}</p>
               <div class="editAndCloseUser">
                 <a class="btn btn-primary" href="#">Edit</a>
                 <a class="btn btn-danger" href="#">Close Account</a>

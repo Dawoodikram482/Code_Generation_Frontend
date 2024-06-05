@@ -64,7 +64,27 @@ export default {
           });
     },
     approveUser(user) {
-      // Implement approve user functionality
+      this.loading = true;
+      axiosInstance.post(`/users/approve/${user.id}`, {
+        accountHolderId: user.id,
+        dayLimit: user.dayLimit,  // Adjust these values as necessary
+        transactionLimit: user.transactionLimit,
+        accountType: ''  // This will be used in the backend logic
+      })
+          .then(response => {
+            // Use the data from the response if needed
+            this.loading = false;
+            // Remove the user from the list
+            this.users = this.users.filter(u => u.id !== user.id);
+            // Show success message or perform any other action
+            alert('User approved successfully.');
+          })
+          .catch(error => {
+            this.error = error.response?.data?.message || 'An error occurred';
+            this.loading = false;
+            // Show error message
+            alert('Failed to approve user.');
+          });
     },
     rejectUser(user) {
       // Implement reject user functionality
