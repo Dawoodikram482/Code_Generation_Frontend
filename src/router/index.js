@@ -37,19 +37,21 @@ const router = createRouter({
     {
       path: '/accountsOverview',
       name: 'Accounts Overview',
+      meta: { role: ['ROLE_EMPLOYEE']}, // Specify roles needed to access the route
       component: AccountsOverview
     },
     {
       path: '/transferFunds',
       name: 'Transfer Funds',
+      meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
       component: TransferFunds
     },
     {
       path: '/approval',
       name: 'Pending Approvals',
+      meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
       component: PendingApprovals
     }
-    
   ]
 });
 
@@ -58,7 +60,18 @@ router.beforeEach((to, from, next) => {
   if (!userSessionStore.user) {
     userSessionStore.checkUserRole();
   }
-  next();
+  // Check if the route has meta roles defined
+  if (to.meta.role) {
+    // If user has the required role, proceed to the route
+    if (userSessionStore.user && to.meta.role.includes(userSessionStore.user.role)) {
+      next();
+    } else {
+      // If user doesn't have the required role, redirect to home or login
+      next(userSessionStore.user ? '/' : '/login');
+    }
+  } else {
+    // If no roles are specified for the route, proceed to the route
+    next();
+  }
 });
-
 export default router;
