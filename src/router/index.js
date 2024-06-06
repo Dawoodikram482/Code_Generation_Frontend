@@ -5,6 +5,7 @@ import Registration from '../components/Authentication/Registration.vue'
 import AccountsOverview from "@/components/AccountsOverview.vue";
 import TransferFunds from "@/components/transactions/TransferFunds.vue";
 import PendingApprovals from "@/components/PendingApprovals.vue";
+import {useUserSessionStore} from "@/stores/UserSession.js";
 
 
 const router = createRouter({
@@ -50,6 +51,14 @@ const router = createRouter({
     }
     
   ]
-})
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  const userSessionStore = useUserSessionStore();
+  if (!userSessionStore.user) {
+    userSessionStore.checkUserRole();
+  }
+  next();
+});
+
+export default router;
