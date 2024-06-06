@@ -52,9 +52,10 @@ export default {
           position: 'top',
           message: 'Login successful'
         });
+        await this.userSessionStore.checkUserRole();
         // Determine the route based on user role
         let route = "/";
-        switch (this.userSessionStore.role) {
+        switch (this.userSessionStore.user.role) {
           case 'ROLE_EMPLOYEE':
             route = "/accountsOverview";
             break;
@@ -65,7 +66,6 @@ export default {
           default:
             route = "/";
         }
-
         // Redirect to the determined route
         this.$router.push(route);
       } catch (error) {
