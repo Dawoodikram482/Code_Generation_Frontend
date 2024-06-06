@@ -18,13 +18,17 @@ const forCustomer = computed(() => {
   return userSessionStore.role === 'ROLE_CUSTOMER';
 });
 
+const shouldShowNavbar = computed(() => {
+  return !this.$route.path.startsWith('/atm');
+});
+
 </script>
 
 <template>
   <div>
     <!-- Show the Navbar based on user role -->
-    <employeeNavbar v-if="forEmployee" />
-    <customerNavbar v-else-if="forCustomer" />
+    <employeeNavbar v-if="forEmployee && shouldShowNavbar" />
+    <customerNavbar v-else-if="forCustomer && shouldShowNavbar" />
 
     <!-- Page content -->
     <div class="content">
