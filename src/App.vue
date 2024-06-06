@@ -3,6 +3,7 @@ import { RouterView } from 'vue-router';
 import employeeNavbar from "@/components/EmployeeNavbar.vue";
 import customerNavbar from "@/components/Navbar.vue";
 import { useUserRole } from '@/stores/userRole'; // Update the import path if necessary
+import { computed } from "vue";
 
 const shouldShowNavbar = computed(() => {
   return !this.$route.path.startsWith('/atm');
