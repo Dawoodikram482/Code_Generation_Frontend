@@ -4,6 +4,10 @@ import employeeNavbar from "@/components/EmployeeNavbar.vue";
 import customerNavbar from "@/components/Navbar.vue";
 import { useUserRole } from '@/stores/userRole'; // Update the import path if necessary
 
+const shouldShowNavbar = computed(() => {
+  return !this.$route.path.startsWith('/atm');
+});
+
 const { isLoggedIn, forEmployee, forCustomer } = useUserRole();
 </script>
 
@@ -12,8 +16,8 @@ const { isLoggedIn, forEmployee, forCustomer } = useUserRole();
     <!-- Show the Navbar only if the user is logged in -->
     <template v-if="isLoggedIn">
       <!-- Show the Navbar based on user role -->
-      <employeeNavbar v-if="forEmployee"/>
-      <customerNavbar v-else-if="forCustomer"/>
+      <employeeNavbar v-if="forEmployee && shouldShowNavbar"/>
+      <customerNavbar v-else-if="forCustomer && shouldShowNavbar"/>
     </template>
 
     <!-- Page content -->
