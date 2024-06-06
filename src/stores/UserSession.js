@@ -81,6 +81,3 @@ export const useUserSessionStore = defineStore("userSession", {
         },
     },
 });
-// // Initialize user data from token when the store is created
-// const store = useUserSessionStore();
-// store.initializeUserFromToken();
