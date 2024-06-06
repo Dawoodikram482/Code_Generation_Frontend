@@ -3,14 +3,17 @@ import HomeView from '../views/HomeView.vue'
 import Login from '../components/Authentication/Login.vue'
 import Registration from '../components/Authentication/Registration.vue'
 import AccountsOverview from "@/components/AccountsOverview.vue";
-import TransferFunds from "@/components/TransferFunds.vue";
+import TransferFunds from "@/components/transactions/TransferFunds.vue";
 import PendingApprovals from "@/components/PendingApprovals.vue";
+
 import ATM from "@/components/ATM/ATM.vue";
 import ATMLogin from "@/components/ATM/ATMLogin.vue";
 import ATMAccounts from "@/components/ATM/ATMAccounts.vue";
 import ATMActions from "@/components/ATM/ATMActions.vue";
 import ATMTransaction from "@/components/ATM/ATMTransaction.vue";
 import ATMThankYou from "@/components/ATM/ATMThankYou.vue";
+
+import {useUserSessionStore} from "@/stores/UserSession.js";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -76,20 +79,41 @@ const router = createRouter({
     {
       path: '/accountsOverview',
       name: 'Accounts Overview',
+      meta: { role: ['ROLE_EMPLOYEE']}, // Specify roles needed to access the route
       component: AccountsOverview
     },
     {
       path: '/transferFunds',
       name: 'Transfer Funds',
+      meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
       component: TransferFunds
     },
     {
       path: '/approval',
       name: 'Pending Approvals',
+      meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
       component: PendingApprovals
     }
-    
   ]
-})
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  const userSessionStore = useUserSessionStore();
+  if (!userSessionStore.user) {
+    userSessionStore.checkUserRole();
+  }
+  // Check if the route has meta roles defined
+  if (to.meta.role) {
+    // If user has the required role, proceed to the route
+    if (userSessionStore.user && to.meta.role.includes(userSessionStore.user.role)) {
+      next();
+    } else {
+      // If user doesn't have the required role, redirect to home or login
+      next(userSessionStore.user ? '/' : '/login');
+    }
+  } else {
+    // If no roles are specified for the route, proceed to the route
+    next();
+  }
+});
+export default router;

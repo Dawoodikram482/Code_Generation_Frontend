@@ -18,6 +18,7 @@
                 <tr>
                   <th>IBAN</th>
                   <th>Account Type</th>
+                  <th>Account Status</th>
                   <th>Customer Name</th>
                   <th>Customer Email</th>
                 </tr>
@@ -27,6 +28,7 @@
                     :class="{ 'even-row': index % 2 === 0, 'odd-row': index % 2 !== 0 }">
                   <td>{{ account.iban }}</td>
                   <td>{{ account.accountType }}</td>
+                  <td>{{account.isActive}}</td>
                   <td>{{ account.customer?.firstName }} {{ account.customer?.lastName }}</td>
                   <td>{{ account.customer?.email }}</td>
                   <td>
@@ -44,9 +46,10 @@
               <p>Name: {{ selectedUser.customer?.firstName }} {{ selectedUser.customer?.lastName }}</p>
               <p>IBAN: {{ selectedUser.iban }}</p>
               <p>DOB: {{ selectedUser.customer?.dateOfBirth }}</p>
+              <p>Account Balance: {{selectedUser.accountBalance}}</p>
               <div class="editAndCloseUser">
                 <a class="btn btn-primary" href="#">Edit</a>
-                <a class="btn btn-danger" href="#">Close Account</a>
+                <a class="btn btn-primary" href="#" @click.prevent="closeAccount(selectedUser.iban)">Close Account</a> <!-- Close Account Button -->
               </div>
             </div>
             <div v-if="transactionData" class="transaction-history">
@@ -104,7 +107,7 @@ export default {
       if (!this.selectedRole) {
         return this.accounts;
       } else {
-        return this.accounts.filter(account => account.customer?.roles.includes(this.selectedRole));
+        return this.accounts.filter(account => account.customer?.role.includes(this.selectedRole));
       }
     }
   },
@@ -124,6 +127,21 @@ export default {
             this.loading = false;
           });
     },
+    closeAccount(iban) {
+      if (confirm("Are you sure you want to close this account?")) {
+        axiosInstance.post(`/accounts/closeAccount/${iban}`)
+            .then(response => {
+              // Handle successful account closure
+              alert("Account closed successfully!");
+              // Reload accounts after closure
+              this.fetchAccountsAndTransactions();
+            })
+            .catch(error => {
+              // Handle error
+              alert("Failed to close account: " + error.message);
+            });
+      }
+    },
     showUserDetails(account) {
       this.selectedUser = account;
       this.transactionData = null;
@@ -138,7 +156,8 @@ export default {
     },
     filterAccounts() {
       this.fetchAccountsAndTransactions();
-    }
+    },
+
   }
 };
 </script>

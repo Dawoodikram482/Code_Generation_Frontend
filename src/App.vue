@@ -1,34 +1,24 @@
 <script setup>
-// Import necessary modules
 import { RouterView } from 'vue-router';
 import employeeNavbar from "@/components/EmployeeNavbar.vue";
 import customerNavbar from "@/components/Navbar.vue";
-
-import { useUserSessionStore } from '@/stores/UserSession'; // Import useUserSessionStore from your store module
-import { computed } from 'vue'; // Import computed from Vue
-
-// Access the userSessionStore from the Vuex store
-const userSessionStore = useUserSessionStore();
-
-// Compute whether to show the Navbar based on the user's role
-const forEmployee = computed(() => {
-  return userSessionStore.role === 'ROLE_EMPLOYEE';
-});
-const forCustomer = computed(() => {
-  return userSessionStore.role === 'ROLE_CUSTOMER';
-});
+import { useUserRole } from '@/stores/userRole'; // Update the import path if necessary
 
 const shouldShowNavbar = computed(() => {
   return !this.$route.path.startsWith('/atm');
 });
 
+const { isLoggedIn, forEmployee, forCustomer } = useUserRole();
 </script>
 
 <template>
   <div>
-    <!-- Show the Navbar based on user role -->
-    <employeeNavbar v-if="forEmployee && shouldShowNavbar" />
-    <customerNavbar v-else-if="forCustomer && shouldShowNavbar" />
+    <!-- Show the Navbar only if the user is logged in -->
+    <template v-if="isLoggedIn">
+      <!-- Show the Navbar based on user role -->
+      <employeeNavbar v-if="forEmployee && shouldShowNavbar"/>
+      <customerNavbar v-else-if="forCustomer && shouldShowNavbar"/>
+    </template>
 
     <!-- Page content -->
     <div class="content">
