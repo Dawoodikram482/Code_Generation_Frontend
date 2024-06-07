@@ -12,12 +12,12 @@
   const userRole = useUserRole();
   const router = useRouter();
 
-  const isLoggedIn = computed(() => userRole.isLoggedIn);
+  const isLoggedIn = computed(() => userRole.isLoggedIn.value.value);
 
   onMounted(() => {
-    if (router.currentRoute.value.path === '/atm' && isLoggedIn.value) {
+    if (router.currentRoute.value.path === '/atm' && isLoggedIn) {
       router.replace({ name: 'atm-accounts' });
-    } else if (router.currentRoute.value.path === '/atm' && !isLoggedIn.value) {
+    } else if (router.currentRoute.value.path.startsWith('/atm') && !isLoggedIn) {
       router.replace({ name: 'atm-login' });
     }
   });
@@ -35,5 +35,17 @@
     border: 10px solid #008773;
     margin: 0 auto;
     padding: 2rem 10rem;
+  }
+
+  .back-link {
+    background: #008773;
+    color: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 1rem;
+    text-align: center;
+    margin: 0 auto;
+    margin-bottom: 1rem;
   }
 </style>
