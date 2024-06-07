@@ -65,6 +65,7 @@ export default {
         await this.userSessionStore.checkUserRole();
         // Determine the route based on user role
         let route = "/";
+        console.log(this.userSessionStore.user)
         switch (this.userSessionStore.user.role) {
           case 'ROLE_EMPLOYEE':
             route = "/accountsOverview";

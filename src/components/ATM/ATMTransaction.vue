@@ -18,7 +18,7 @@
         <input v-model.number="amount" type="number" placeholder="Enter amount" />
       </div>
       <div class="buttons">
-        <a href="/atm/actions" class="btn-back">Back</a>
+        <a :href="`/atm/actions?accountNumber=${selectedAccount.iban}`">Back</a>
         <button @click="handleTransaction">{{ transactionType }}</button>
       </div>
     </div>
