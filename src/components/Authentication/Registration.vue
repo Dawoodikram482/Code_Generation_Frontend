@@ -63,7 +63,7 @@
               </div>
 
 
-              <button class="btn btn-dark btn-lg mt-7 bg-yellow-500 text-lg border-none  text-black font-bold py-2  rounded-2xl w-1/6 hover:bg-yellow-600" name="registerButton" id="registerButton" @click="register" type="submit">Register
+              <button class="registerButton" name="registerButton" id="registerButton" @click="register" type="submit">Register
               </button>
 
             </div>
@@ -148,6 +148,10 @@ body, #app {
   display: block;
 }
 
+.registerButton {
+  background-color: #f59e0b;
+  font-weight: 600;
+}
 .card-body {
   background-color: #fff;
   border-radius: 1rem;

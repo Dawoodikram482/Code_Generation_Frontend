@@ -1,31 +1,34 @@
 <template>
 
-
-  <div class="account-details">
-    <div>First Name: {{ firstName }}</div>
-    <div>Last Name: {{ lastName }}</div>
-    <div>Date of birth: {{ dateOfBirth }}</div>
-    <div>BSN: {{ bsn }}</div>
-    <div>Email: {{ email }}</div>
-    <div>Phone number: {{ phoneNumber }}</div>
-  </div>
-
-
-  <div v-for="account in accounts" :key="account.iban" class="account-container">
-    <div class="account-info">
-      <div class="account-type">{{ account.accountType }}</div>
-      <div class="account-iban">{{ account.iban }}</div>
+  <h2>
+    Welcome back
+  </h2>
+  <div class="overview-container">
+    <div class="account-details">
+      <div>First Name: {{ firstName }}</div>
+      <div>Last Name: {{ lastName }}</div>
+      <div>Date of birth: {{ dateOfBirth }}</div>
+      <div>BSN: {{ bsn }}</div>
+      <div>Email: {{ email }}</div>
+      <div>Phone number: {{ phoneNumber }}</div>
     </div>
-    <div class="account-balance">EUR {{ account.accountBalance }}</div>
+
+
+    <div v-for="account in accounts" :key="account.iban" class="account-container">
+      <div class="account-info">
+        <div class="account-type">{{ account.accountType }}</div>
+        <div class="account-iban">{{ account.iban }}</div>
+      </div>
+      <div class="account-balance">EUR {{ account.accountBalance }}</div>
+    </div>
+
+
+    <div class="flex justify-start my-4">
+      <button class="transfer-button">
+        Transfer
+      </button>
+    </div>
   </div>
-
-
-  <div class="flex justify-start my-4">
-    <button class="transfer-button">
-      Transfer
-    </button>
-  </div>
-
 </template>
 
 <script>
@@ -70,6 +73,10 @@
 </script>
 
 <style scoped>
+.overview-container {
+  margin-left: 150px;
+}
+
 .account-container {
   background-color: #f5f5f5;
   border-radius: 10px;
