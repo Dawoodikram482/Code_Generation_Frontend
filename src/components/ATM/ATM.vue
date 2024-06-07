@@ -7,16 +7,14 @@
 <script setup>
   import { computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useUserSessionStore } from '@/stores/UserSession';
+  import {useUserRole} from "@/stores/userRole.js";
 
-  const userSessionStore = useUserSessionStore();
+  const userRole = useUserRole();
   const router = useRouter();
 
-  const isLoggedIn = computed(() => userSessionStore.isLoggedIn);
+  const isLoggedIn = computed(() => userRole.isLoggedIn);
 
   onMounted(() => {
-    userSessionStore.localLogin();
-
     if (router.currentRoute.value.path === '/atm' && isLoggedIn.value) {
       router.replace({ name: 'atm-accounts' });
     } else if (router.currentRoute.value.path === '/atm' && !isLoggedIn.value) {

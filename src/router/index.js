@@ -40,7 +40,10 @@ const router = createRouter({
         {
           path: '/atm/actions',
           name: 'atm-actions',
-          component: ATMActions
+          component: ATMActions,
+          props: route => ({
+            accountNumber: route.query.accountNumber,
+          })
         },
         {
           path: '/atm/transaction/:type',
