@@ -1,5 +1,6 @@
 <template>
   <div class="atm-dashboard">
+    <img src="/src/assets/logo.png" width="200px">
     <h1>Welcome!</h1>
     <h2>Choose an account to proceed</h2>
 
@@ -15,19 +16,7 @@
         <div>€ {{ account.accountBalance.toFixed(2) }}</div>
       </div>
     </div>
-
-    <div class="accounts">
-      <h3>Saving Accounts</h3>
-      <div
-          v-for="account in savingsAccounts"
-          :key="account.iban"
-          class="account"
-          @click="goToActions(account.iban)"
-      >
-        <div>{{ account.iban }}</div>
-        <div>€ {{ account.accountBalance.toFixed(2) }}</div>
-      </div>
-    </div>
+    <a href="/" class="back-link">Back to Home Page</a>
   </div>
 </template>
 
@@ -74,6 +63,11 @@ export default {
   gap: 10px;
   margin-top: 20px;
   text-align: center;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
 }
 
 h1 {

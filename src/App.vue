@@ -7,7 +7,7 @@ import { computed } from "vue";
 const route = useRoute();
 
 const shouldShowNavbar = computed(() => {
-  return !route.path.startsWith('/atm');
+  return !route.path.startsWith('/atm') && route.path != '/';
 });
 
 const { isLoggedIn, forEmployee, forCustomer } = useUserRole();
