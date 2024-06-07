@@ -1,33 +1,33 @@
 <template>
   <div class="atm-dashboard">
     <div>
-      <h1>Hey <span>{{ username }}</span>!</h1>
+      <h1>Hey {{ username }}!</h1>
       <h2>How much do you want to {{ transactionType }}?</h2>
     </div>
 
-    <div>
+    <div v-if="selectedAccount">
       <div class="accounts">
         <h3>Selected Account</h3>
         <div class="account">
-          <div>NL01UNIB0000000002</div>
-          <div>€ 1,000.00</div>
+          <div>{{ selectedAccount.iban }}</div>
+          <div>€ {{ selectedAccount.accountBalance.toFixed(2) }}</div>
         </div>
       </div>
       <div class="accounts">
         <h3>Amount</h3>
-        <input type="number" placeholder="Enter amount" />
+        <input v-model.number="amount" type="number" placeholder="Enter amount" />
       </div>
       <div class="buttons">
         <a href="/atm/actions" class="btn-back">Back</a>
-        <button>{{ transactionType }}</button>
+        <button @click="handleTransaction">{{ transactionType }}</button>
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
 import { useUserSessionStore } from '@/stores/UserSession';
+import axiosInstance from "../../../axios.js";
 
 export default {
   props: {
@@ -38,16 +38,52 @@ export default {
         return ['withdraw', 'deposit'].includes(value);
       }
     },
+    accountNumber: {
+      type: String,
+      required: true
+    }
   },
-  setup() {
-    const userSessionStore = useUserSessionStore();
-    userSessionStore.localLogin();
-
-    const username = userSessionStore.getUserFullName;
-
+  data() {
     return {
-      username
+      currentAccounts: [],
+      selectedAccount: null,
+      amount: 0,
+      username: ""
     };
+  },
+  created() {
+    this.getAccounts();
+  },
+  methods: {
+    getAccounts() {
+      axiosInstance.get("/users/myAccountOverview")
+          .then(response => {
+            this.username = response.data.firstName + " " + response.data.lastName;
+            const accounts = response.data.accounts;
+            this.currentAccounts = accounts;
+            this.selectedAccount = accounts.find(account => account.iban === this.accountNumber);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+    },
+    handleTransaction() {
+      const endpoint = this.transactionType === 'withdraw' ? '/transactions/atm/withdraw' : '/transactions/atm/deposit';
+      axiosInstance.post(endpoint, {
+        IBAN: this.accountNumber,
+        amount: this.amount,
+        currencyType: "EURO"
+      })
+          .then(response => {
+            alert(`${this.transactionType.charAt(0).toUpperCase() + this.transactionType.slice(1)} successful!`);
+            this.getAccounts();
+            this.$router.push({ path: '/atm/thank-you' });
+          })
+          .catch(error => {
+            console.error(error);
+            alert(`Failed to ${this.transactionType}. ${error.response.data}`);
+          });
+    }
   }
 };
 </script>
