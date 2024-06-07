@@ -23,7 +23,7 @@
       </div>
       <div class="buttons" v-else>
         <router-link to="/login" class="btn-login">Login</router-link>
-        <router-link to="/register" class="btn-login">Register</router-link>
+        <router-link to="/Registration" class="btn-login">Register</router-link>
       </div>
   </div>
 </template>

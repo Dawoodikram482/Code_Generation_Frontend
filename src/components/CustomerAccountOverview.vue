@@ -1,30 +1,33 @@
 <template>
 
-  <h3 class="text-2xl font-bold mb-2">
-    <div>First Name: {{ firstName }}</div>
-    <div>Last Name: {{ lastName }}</div>
-    <div>Date of birth: {{ dateOfBirth }}</div>
-    <div>BSN: {{ bsn }}</div>
-    <div>Email: {{ email }}</div>
-    <div>Phone number: {{ phoneNumber }}</div>
-  </h3>
-
-  <div v-for="account in accounts" :key="account.iban" class="flex flex-col items-start justify-center bg-gray-100 rounded-md shadow-md w-full py-2 px-3 mx-auto">
-    <div class="flex items-center justify-between w-full py-2">
-      <div class="flex flex-col justify-evenly">
-        <div>{{ account.accountType }}</div>
-        <div>{{ account.iban }}</div>
-      </div>
-      <div class="text-4xl font-bold mb-4 self-center">
-        {{ account.accountBalance }}
-      </div>
+  <h2>
+    Welcome back
+  </h2>
+  <div class="overview-container">
+    <div class="account-details">
+      <div>First Name: {{ firstName }}</div>
+      <div>Last Name: {{ lastName }}</div>
+      <div>Date of birth: {{ dateOfBirth }}</div>
+      <div>BSN: {{ bsn }}</div>
+      <div>Email: {{ email }}</div>
+      <div>Phone number: {{ phoneNumber }}</div>
     </div>
-  </div>
 
-  <div class="flex justify-start my-4">
-    <button class="bg-yellow-500 text-black font-semibold py-2 px-4 rounded-md w-2/5 hover:bg-yellow-600">
-      Transfer
-    </button>
+
+    <div v-for="account in accounts" :key="account.iban" class="account-container">
+      <div class="account-info">
+        <div class="account-type">{{ account.accountType }}</div>
+        <div class="account-iban">{{ account.iban }}</div>
+      </div>
+      <div class="account-balance">EUR {{ account.accountBalance }}</div>
+    </div>
+
+
+    <div class="flex justify-start my-4">
+      <button class="transfer-button">
+        Transfer
+      </button>
+    </div>
   </div>
 </template>
 
@@ -69,4 +72,51 @@
 };
 </script>
 
+<style scoped>
+.overview-container {
+  margin-left: 150px;
+}
 
+.account-container {
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-type {
+  font-weight: bold;
+}
+
+.account-iban {
+  color: #888;
+}
+
+.account-balance {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.transfer-button {
+  background-color: #f59e0b;
+  color: #000000;
+  font-weight: 600;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 0.375rem;
+  width: 40%;
+  transition: background-color 0.3s;
+}
+</style>
