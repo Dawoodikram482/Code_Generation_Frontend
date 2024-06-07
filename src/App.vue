@@ -1,28 +1,33 @@
-<script>
-// Import necessary modules
-import { RouterView } from 'vue-router';
+<script setup>
+import {RouterView, useRoute} from 'vue-router';
 import employeeNavbar from "@/components/EmployeeNavbar.vue";
 import customerNavbar from "@/components/Navbar.vue";
+import { useUserRole } from '@/stores/userRole'; // Update the import path if necessary
+import { computed } from "vue";
+const route = useRoute();
 
-import { useUserSessionStore } from '@/stores/UserSession'; // Import useUserSessionStore from your store module
-import { computed } from 'vue'; // Import computed from Vue
+const shouldShowNavbar = computed(() => {
+  return !route.path.startsWith('/atm');
+});
 
-export default {
-  name: "App",
-  components: {
-    employeeNavbar,
-    customerNavbar
-  },
-}
-
+const { isLoggedIn, forEmployee, forCustomer } = useUserRole();
 </script>
 
 <template>
-  <main>
-    <EmployeeNavbar/>
-    <RouterView/>
-    <CustomerNavbar/>
-  </main>
+  <div>
+    <!-- Show the Navbar only if the user is logged in -->
+    <template v-if="isLoggedIn">
+      <!-- Show the Navbar based on user role -->
+      <employeeNavbar v-if="forEmployee && shouldShowNavbar"/>
+      <customerNavbar v-else-if="forCustomer && shouldShowNavbar"/>
+    </template>
+
+    <!-- Page content -->
+    <div class="content">
+      <!-- Render the router view -->
+      <router-view></router-view>
+    </div>
+  </div>
 </template>
 
 <style scoped>

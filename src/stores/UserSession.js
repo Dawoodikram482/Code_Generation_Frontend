@@ -56,7 +56,8 @@ export const useUserSessionStore = defineStore("userSession", {
                     const decodedToken = decodeToken(token);
                     if (decodedToken) {
                         this.user = {
-                            role: decodedToken.auth
+                            id: decodedToken.sub,
+                            role: decodedToken.auth,
                         };
                     }
                 } catch (error) {
@@ -75,7 +76,7 @@ export const useUserSessionStore = defineStore("userSession", {
         },
         logout() {
             this.user = null;
-            this.token = null;
+            this.jwt = null;
             localStorage.removeItem("jwt");
         },
     },

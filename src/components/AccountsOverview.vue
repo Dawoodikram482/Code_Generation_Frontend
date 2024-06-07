@@ -2,11 +2,6 @@
   <div class="table-responsive">
     <div class="table-responsive-sm">
       <h2>Accounts Overview</h2>
-      <select v-model="selectedRole" @change="filterAccounts">
-        <option value="">All Users</option>
-        <option value="ROLE_EMPLOYEE">Employees</option>
-        <option value="ROLE_CUSTOMER">Customers</option>
-      </select>
       <div v-if="loading">Loading...</div>
       <div v-if="error">{{ error }}</div>
       <div v-if="accounts.length">
@@ -18,6 +13,7 @@
                 <tr>
                   <th>IBAN</th>
                   <th>Account Type</th>
+                  <th>Account Status</th>
                   <th>Customer Name</th>
                   <th>Customer Email</th>
                 </tr>
@@ -27,6 +23,7 @@
                     :class="{ 'even-row': index % 2 === 0, 'odd-row': index % 2 !== 0 }">
                   <td>{{ account.iban }}</td>
                   <td>{{ account.accountType }}</td>
+                  <td>{{account.isActive}}</td>
                   <td>{{ account.customer?.firstName }} {{ account.customer?.lastName }}</td>
                   <td>{{ account.customer?.email }}</td>
                   <td>
@@ -41,15 +38,46 @@
             </div>
             <div v-if="selectedUser && !transactionData" class="user-details">
               <h2>User Details</h2>
-              <p>Name: {{ selectedUser.customer?.firstName }} {{ selectedUser.customer?.lastName }}</p>
-              <p>IBAN: {{ selectedUser.iban }}</p>
-              <p>DOB: {{ selectedUser.customer?.dateOfBirth }}</p>
-              <p>Account Balance: {{selectedUser.accountBalance}}</p>
-              <div class="editAndCloseUser">
-                <a class="btn btn-primary" href="#">Edit</a>
-                <a class="btn btn-danger" href="#">Close Account</a>
-              </div>
+              <form @submit.prevent="updateUserDetails">
+                <div class="form-group">
+                  <label for="firstName">First Name:</label>
+                  <input type="text" v-model="selectedUser.customer.firstName" id="firstName" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name:</label>
+                  <input type="text" v-model="selectedUser.customer.lastName" id="lastName" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="iban">IBAN:</label>
+                  <input type="text" v-model="selectedUser.iban" id="iban" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="dateOfBirth">Date of Birth:</label>
+                  <input type="date" v-model="selectedUser.customer.dateOfBirth" id="dateOfBirth" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="accountBalance">Account Balance:</label>
+                  <input type="number" v-model="selectedUser.accountBalance" id="accountBalance" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="transactionLimit">Transaction Limit:</label>
+                  <input type="number" v-model="selectedUser.customer.transactionLimit" id="transactionLimit" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="dayLimit">Day Limit:</label>
+                  <input type="number" v-model="selectedUser.customer.dayLimit" id="dayLimit" class="form-control" required>
+                </div>
+                <div class="form-group">
+                  <label for="absoluteLimit">Absolute Limit:</label>
+                  <input type="number" v-model="selectedUser.absoluteLimit" id="absoluteLimit" class="form-control" required>
+                </div>
+                <div class="editAndCloseUser">
+                  <button type="submit" class="btn btn-primary">Update</button>
+                  <button type="button" class="btn btn-danger" @click.prevent="closeAccount(selectedUser.iban)">Close Account</button>
+                </div>
+              </form>
             </div>
+
             <div v-if="transactionData" class="transaction-history">
               <h2>Transaction History Of {{ selectedUser.customer?.firstName }} {{ selectedUser.customer?.lastName }}</h2>
               <ul class="list-unstyled">
@@ -105,14 +133,14 @@ export default {
       if (!this.selectedRole) {
         return this.accounts;
       } else {
-        return this.accounts.filter(account => account.customer?.roles.includes(this.selectedRole));
+        return this.accounts.filter(account => account.customer?.role.includes(this.selectedRole));
       }
     }
   },
   methods: {
     fetchAccountsAndTransactions() {
       axios.all([
-        axiosInstance.get('/accounts', { params: { limit: 50, offset: 0 } }),
+        axiosInstance.get('/accounts/status', { params: { limit: 50, offset: 0 } }),
         axiosInstance.get('/transactions')
       ])
           .then(axios.spread((accountsResponse, transactionsResponse) => {
@@ -123,6 +151,49 @@ export default {
           .catch(error => {
             this.error = error.message;
             this.loading = false;
+          });
+    },
+    closeAccount(iban) {
+      if (confirm("Are you sure you want to close this account?")) {
+        axiosInstance.post(`/accounts/closeAccount/${iban}`)
+            .then(response => {
+              // Handle successful account closure
+              alert("Account closed successfully!");
+              this.selectedUser = null;
+              // Reload accounts after closure
+              this.fetchAccountsAndTransactions();
+            })
+            .catch(error => {
+              // Handle error
+              alert("Failed to close account: " + error.message);
+            });
+      }
+    },
+    updateUserDetails() {
+      const iban = this.selectedUser.iban;
+
+      // First request to update absolute limit
+      const absoluteLimitRequest = axiosInstance.put(`/accounts/${iban}/limit`, {
+        absoluteLimit: this.selectedUser.absoluteLimit
+      });
+
+      // Second request to update day limit
+      const dayLimitRequest = axiosInstance.put(`/users/${this.selectedUser.customer.id}/limits`, {
+        dayLimit: this.selectedUser.customer.dayLimit
+      });
+
+      // Execute the first request, then the second
+      absoluteLimitRequest
+          .then(response => {
+            return dayLimitRequest;
+          })
+          .then(response => {
+            alert("User details updated successfully!");
+            this.fetchAccountsAndTransactions();
+          })
+          .catch(error => {
+            console.error("Failed to update user details:", error);
+            alert("Failed to update user details: " + error.message);
           });
     },
     showUserDetails(account) {
@@ -139,7 +210,8 @@ export default {
     },
     filterAccounts() {
       this.fetchAccountsAndTransactions();
-    }
+    },
+
   }
 };
 </script>
