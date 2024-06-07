@@ -5,6 +5,8 @@ import Registration from '../components/Authentication/Registration.vue'
 import AccountsOverview from "@/components/AccountsOverview.vue";
 import TransferFunds from "@/components/transactions/TransferFunds.vue";
 import PendingApprovals from "@/components/PendingApprovals.vue";
+import CustomerAccountOverview from "@/components/CustomerAccountOverview.vue";
+import RegistrationSuccessful from "@/views/RegistrationSuccessful.vue";
 
 
 const router = createRouter({
@@ -14,6 +16,16 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/CustomerAccountOverview',
+      name: 'CustomerAccountOverview',
+      component: CustomerAccountOverview
+    },
+    {
+      path: '/RegistrationSuccessful',
+      name: 'RegistrationSuccessful',
+      component: RegistrationSuccessful
     },
     {
       path: '/login',

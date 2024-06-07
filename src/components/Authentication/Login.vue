@@ -59,7 +59,7 @@ export default {
             route = "/accountsOverview";
             break;
           case 'ROLE_CUSTOMER':
-            route = "/registration";
+            route = "/CustomerAccountOverview";
             break;
             // Add more cases for other roles if needed
           default:

@@ -1,134 +1,145 @@
 <template>
   <section class="vh-100 gradient-custom">
     <div class="alert alert-danger" v-if="errorMessage">{{ errorMessage }}</div>
-    <div class="container py-5 h-100">
+    <div class="container h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-          <div class="card-body p-5 text-center">
+        <div class="col-12">
+          <div class="card-body px-5 text-center max-w-6xl mx-auto">
             <div class="mb-md-5 mt-md-4 pb-5">
-              <img src="/logo.png" alt="Logo" class="logo mb-4" />
-              <h2 class="fw-bold mb-4 text-uppercase">Register</h2>
-
-              <div class="form-outline form-white mb-4">
-                <input id="inputFirstName" v-model="firstName" type="text" class="form-control" />
-                <label class="form-label" for="inputFirstName">First Name</label>
+              <div class="mb-4 flex flex-col items-center justify-center">
+                <img src="/src/assets/logo.png" alt="Logo" class="w-24 items-end justify-end mx-auto d-block" />
+                <h2 class="fw-bold text-xl text-black mb-4">Register as a new client</h2>
+                <!--                <h3 class="mb-2 font-medium">I want to open:</h3>
+                                <select class="custom-select form-select  w-[25%] border h-10 border-black" aria-label="Default select example">
+                                  <option value="" selected disabled hidden></option>
+                                  <option value="1">Option 1</option>
+                                  <option value="2">Option 2</option>
+                                  <option value="3">Option 3</option>
+                                </select>-->
               </div>
-
-              <div class="form-outline form-white mb-4">
-                <input id="inputLastName" v-model="lastName" type="text" class="form-control" />
-                <label class="form-label" for="inputLastName">Last Name</label>
-              </div>
-
-              <div class="form-outline form-white mb-4">
-                <input id="inputEmail" v-model="email" type="text" class="form-control" />
-                <label class="form-label" for="inputEmail">Email</label>
-              </div>
-
-              <div class="form-outline form-white mb-4">
-                <div class="input-group">
-                  <input type="password" v-model="password" class="form-control" id="inputPassword" />
-                  <div class="input-group-append">
-                    <button class="btn btn-primary w-100" disabled type="button" v-if="loading">
-                    <span aria-hidden="true" class="spinner-grow spinner-grow-sm" role="status"></span>
-                      Show password
-                    </button>
+              <div class="bg-gray-100 p-6 rounded-md grid grid-cols-2 gap-4 max-w-3xl mx-auto">
+                <div class="form-outline form-white">
+                  <div class="flex flex-col w-5/6 mx-auto">
+                    <label class="form-label font-bold text-left" for="inputFirstName">First Name</label>
+                    <input id="inputFirstName" v-model="firstName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
                   </div>
                 </div>
-                <label for="inputPassword" class="form-control-label">Password</label>
-              </div>
 
-              <div class="form-outline form-white mb-4">
-                <div class="input-group">
-                  <input type="password" v-model="confirmPassword" class="form-control" id="inputConfirmPassword" />
+                <div class="form-outline form-white">
+                  <div class="flex flex-col w-5/6 mx-auto">
+                    <label class="form-label font-bold text-left" for="inputLastName">Last Name</label>
+                    <input id="inputLastName" v-model="lastName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                  </div>
                 </div>
-                <label for="inputConfirmPassword" class="form-control-label">Confirm Password</label>
+
+                <div class="form-outline form-white">
+                  <div class="flex flex-col w-5/6 mx-auto">
+                    <label class="form-label font-bold text-left" for="inputEmail">Email</label>
+                    <input id="inputEmail" v-model="email" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                  </div>
+                </div>
+
+                <div class="form-outline form-white">
+                  <div class="flex flex-col w-5/6 mx-auto">
+                    <label class="form-label font-bold text-left" for="inputPhoneNumber">Phone Number</label>
+                    <input id="inputPhoneNumber" v-model="phoneNumber" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                  </div>
+                </div>
+
+                <div class="form-outline form-white">
+                  <div class="flex flex-col w-5/6 mx-auto">
+                    <label class="form-label font-bold text-left" for="inputBSN">BSN</label>
+                    <input id="inputBSN" v-model="bsn" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                  </div>
+                </div>
+
+                <div class="form-outline form-white mb-3">
+                  <div class="flex flex-col w-5/6 mx-auto">
+                    <label for="inputPassword" class="form-label font-bold text-left">Create a password</label>
+                    <div class="input-group w-full">
+                      <input type="password" v-model="password" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" id="inputPassword" />
+                      <div class="input-group-append">
+                        <!-- <button class="btn btn-primary w-full" disabled type="button" v-if="loading">
+                          <span aria-hidden="true" class="spinner-grow spinner-grow-sm" role="status"></span>
+                          Show password
+                        </button> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="form-outline form-white mb-4">
-                <input id="inputBSN" v-model="bsn" type="text" class="form-control" />
-                <label class="form-label" for="inputBSN">BSN Number</label>
-              </div>
 
-              <div class="form-outline form-white mb-4">
-                <input id="inputAddress" v-model="address" type="text" class="form-control" />
-                <label class="form-label" for="inputAddress">Address</label>
-              </div>
+              <button class="btn btn-dark btn-lg mt-7 bg-yellow-500 text-lg border-none  text-black font-bold py-2  rounded-2xl w-1/6 hover:bg-yellow-600" name="registerButton" id="registerButton" @click="register" type="submit">Register
+              </button>
 
-              <div class="form-outline form-white mb-4">
-                <input id="inputPhoneNumber" v-model="phoneNumber" type="text" class="form-control" />
-                <label class="form-label" for="inputPhoneNumber">Phone Number</label>
-              </div>
-
-              <button class="btn btn-dark btn-lg px-5" name="registerButton" id="registerButton" @click="register"
-                type="submit">Register</button>
             </div>
 
             <div>
-              <p class="mb-0">Already have an account? <a @click="login" class="text-blue-50 fw-bold">Log In</a></p>
+              <p class="mb-0 items">Already have an account? <a @click="login" class="text-white-50 items-center fw-bold">Log In</a></p>
             </div>
           </div>
         </div>
       </div>
     </div>
   </section>
+  <popup v-if="showPopup" :show="showPopup" @close="showPopup = false" />
 </template>
-  
+
 <script>
+import axios from 'axios';
+import Popup from '@/components/UserAlreadyExist.vue';
+import router from '@/router';
 export default {
   name: 'Register',
+  components: {
+    Popup
+  },
   data() {
     return {
       firstName: '',
       lastName: '',
       email: '',
       password: '',
-      confirmPassword: '',
       bsn: '',
-      address: '',
       phoneNumber: '',
-      errorMessage: ''
+      errorMessage: '',
+      loading: false,
+      showPopup: false
     };
   },
   methods: {
-    register() {
-      if (this.password !== this.confirmPassword) {
-        this.errorMessage = 'Passwords do not match';
-        return;
-      }
-
-      if (!this.validateEmail(this.email)) {
-        this.errorMessage = 'Invalid email format';
-        return;
-      }
-
+    async register() {
+      this.loading = true;
       this.errorMessage = '';
-      console.log('Registering user with details:', {
-        firstName: this.firstName,
-        lastName: this.lastName,
-        email: this.email,
-        password: this.password,
-        bsn: this.bsn,
-        address: this.address,
-        phoneNumber: this.phoneNumber
-      });
-      // Implement actual registration logic here
-    },
-    login() {
-      this.$router.push('/login');
-    },
-    togglePassword() {
-      const passwordField = document.getElementById('inputPassword');
-      const confirmPasswordField = document.getElementById('inputConfirmPassword');
-      const passwordToggleButton = document.getElementById('passwordToggleButton');
+      try {
+        const response = await axios.post('http://localhost:8080/users/register', {
+          firstName: this.firstName,
+          lastName: this.lastName,
+          email: this.email,
+          password: this.password,
+          bsn: this.bsn,
+          phoneNumber: this.phoneNumber
+        });
+        console.log('Response:', response);
+        if (response.data.status === 'success') {
+          this.showPopup = false;
+          router.push('/RegistrationSuccessful');
+        }
+        else {
+          this.errorMessage = 'An unexpected error occurred.';
+        }
+      } catch (error) {
+        console.error('Error:', error);
 
-      if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-        confirmPasswordField.type = 'text';
-        passwordToggleButton.textContent = 'Hide password';
-      } else {
-        passwordField.type = 'password';
-        confirmPasswordField.type = 'password';
-        passwordToggleButton.textContent = 'Show password';
+        if (error.response && error.response.status === 409) {
+          this.errorMessage = error.response.data.message;
+          this.showPopup = true;
+        } else {
+          this.errorMessage = 'An error occurred. Please try again later.';
+        }
+      } finally {
+        this.loading = false;
       }
     },
     validateEmail(email) {
@@ -138,31 +149,21 @@ export default {
   }
 };
 </script>
-  
+
 <style>
 body, #app {
   display: block;
 }
-.logo {
-  width: 200px; /* Set the width of the logo */
-  height: auto; /* Maintain the aspect ratio */
-}
-.login-container img {
-        display: block;
-        width: 20%;
-        margin: 0 auto;
-        position:right;
-    }
 
 .card-body {
-  background-color: #adb4b6;
+  background-color: #fff;
   border-radius: 1rem;
 }
 
 .form-control {
   background-color: #f3f3f3;
   border: none;
-  border-radius: 0.5rem;
+
   padding: 0.75rem;
   font-size: 1rem;
 }
@@ -172,18 +173,6 @@ body, #app {
   font-size: 0.875rem;
 }
 
-.btn-dark {
-  background-color: #424242;
-  color: #fff;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0.75rem 2rem;
-  font-size: 1rem;
-}
-
-.btn-dark:hover {
-  background-color: #303030;
-}
 
 .alert-danger {
   background-color: #ffebee;
@@ -219,4 +208,32 @@ body, #app {
   padding-left: 3rem;
   padding-right: 3rem;
 }
+
+.custom-select {
+  appearance: none;
+  background-image: url('../../../../../IdeaProjects/Code_Generation_Frontend/src/assets/icons8-sort-down-25.png');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  padding-right: 30px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.custom-select:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.custom-select option[disabled][hidden] {
+  display: none;
+}
+
+.custom-select option[value=""] {
+  color: #999;
+}
+
+
 </style>
