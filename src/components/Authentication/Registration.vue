@@ -8,14 +8,7 @@
             <div class="mb-md-5 mt-md-4 pb-5">
               <div class="mb-4 flex flex-col items-center justify-center">
                 <img src="/src/assets/logo.png" alt="Logo" class="w-24 items-end justify-end mx-auto d-block" />
-                <h2 class="fw-bold text-xl text-black mb-4">Register as a new client</h2>
-                <!--                <h3 class="mb-2 font-medium">I want to open:</h3>
-                                <select class="custom-select form-select  w-[25%] border h-10 border-black" aria-label="Default select example">
-                                  <option value="" selected disabled hidden></option>
-                                  <option value="1">Option 1</option>
-                                  <option value="2">Option 2</option>
-                                  <option value="3">Option 3</option>
-                                </select>-->
+                <h2> Register as a new client</h2>
               </div>
               <div class="bg-gray-100 p-6 rounded-md grid grid-cols-2 gap-4 max-w-3xl mx-auto">
                 <div class="form-outline form-white">
@@ -70,7 +63,7 @@
               </div>
 
 
-              <button class="btn btn-dark btn-lg mt-7 bg-yellow-500 text-lg border-none  text-black font-bold py-2  rounded-2xl w-1/6 hover:bg-yellow-600" name="registerButton" id="registerButton" @click="register" type="submit">Register
+              <button class="registerButton" name="registerButton" id="registerButton" @click="register" type="submit">Register
               </button>
 
             </div>
@@ -155,6 +148,10 @@ body, #app {
   display: block;
 }
 
+.registerButton {
+  background-color: #f59e0b;
+  font-weight: 600;
+}
 .card-body {
   background-color: #fff;
   border-radius: 1rem;
