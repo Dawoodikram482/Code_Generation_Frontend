@@ -152,7 +152,6 @@ color: darkolivegreen;
   display: block;
   width: 20%;
   margin: 0 auto;
-  position: right;
 }
 
 .logged-in-message {

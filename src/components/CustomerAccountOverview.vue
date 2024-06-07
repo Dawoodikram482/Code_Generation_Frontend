@@ -31,6 +31,7 @@
 <script>
 
   import axios from 'axios';
+  import axiosInstance from "../../axios.js";
 
   export default {
   data() {
@@ -48,23 +49,23 @@
   this.fetchAccountOverview();
 },
   methods: {
-  fetchAccountOverview() {
-  axios.get('http://localhost:8080/users/myAccountOverview')
-  .then(response => {
-  const data = response.data;
-  this.firstName = data.firstName;
-  this.lastName = data.lastName;
-  this.email = data.email;
-  this.phoneNumber = data.phoneNumber;
-  this.dateOfBirth = data.dateOfBirth;
-  this.bsn = data.bsn;
-  this.accounts = data.accounts;
-})
-  .catch(error => {
-  console.error('Error fetching account overview:', error);
-});
-}
-}
+    fetchAccountOverview() {
+      axiosInstance.get("/users/myAccountOverview")
+          .then(response => {
+            const data = response.data;
+            this.firstName = data.firstName;
+            this.lastName = data.lastName;
+            this.email = data.email;
+            this.phoneNumber = data.phoneNumber;
+            this.dateOfBirth = data.dateOfBirth;
+            this.bsn = data.bsn;
+            this.accounts = data.accounts;
+          })
+          .catch(error => {
+            console.error(error);
+          });
+    }
+  }
 };
 </script>
 
