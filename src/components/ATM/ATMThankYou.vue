@@ -15,18 +15,28 @@
 </template>
 
 <script>
-import { useUserSessionStore } from '@/stores/UserSession';
+import axiosInstance from "../../../axios.js";
 
 export default {
-  setup() {
-    const userSessionStore = useUserSessionStore();
-    userSessionStore.localLogin();
-
-    const username = userSessionStore.getUserFullName;
-
+  data() {
     return {
-      username
+      username: ""
     };
+  },
+  created() {
+    this.getAccounts();
+  },
+  methods: {
+    getAccounts() {
+      axiosInstance.get("/users/myAccountOverview")
+          .then(response => {
+            console.log(response.data)
+            this.username = response.data.firstName + " " + response.data.lastName;
+          })
+          .catch(error => {
+            console.error(error);
+          });
+    }
   }
 };
 </script>
