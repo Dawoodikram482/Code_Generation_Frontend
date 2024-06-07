@@ -5,6 +5,7 @@ import Registration from '../components/Authentication/Registration.vue'
 import AccountsOverview from "@/components/AccountsOverview.vue";
 import TransferFunds from "@/components/transactions/TransferFunds.vue";
 import PendingApprovals from "@/components/PendingApprovals.vue";
+import TransactionHistory from "@/components/transactions/TransactionHistory.vue";
 import {useUserSessionStore} from "@/stores/UserSession.js";
 
 
@@ -51,6 +52,12 @@ const router = createRouter({
       name: 'Pending Approvals',
       meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
       component: PendingApprovals
+    },
+    {
+      path: '/transactions',
+      name: 'Transactions',
+      meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
+      component: TransactionHistory
     }
   ]
 });

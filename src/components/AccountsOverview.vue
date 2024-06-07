@@ -114,7 +114,7 @@ export default {
   methods: {
     fetchAccountsAndTransactions() {
       axios.all([
-        axiosInstance.get('/accounts', { params: { limit: 50, offset: 0 } }),
+        axiosInstance.get('/accounts/status', { params: { limit: 50, offset: 0 } }),
         axiosInstance.get('/transactions')
       ])
           .then(axios.spread((accountsResponse, transactionsResponse) => {
