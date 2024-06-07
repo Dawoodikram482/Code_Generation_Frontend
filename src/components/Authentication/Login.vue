@@ -1,7 +1,12 @@
 <template>
-  <div class="container login-container">
+  <div v-if="!userSessionStore.user" class="container login-container">
     <img src="/logo.png" class="text-left"/>
-    <h2 class="text-center">Login</h2>
+    <div class="welcome-message">
+      <h2 class="text-center">Welcome to Our Bank</h2>
+    </div>
+    <div class="login-prompt">
+      <h4 class="text-center">Please log in to access your account.</h4>
+    </div>
     <div class="alert alert-danger" role="alert" v-if="invalidLogin">
       Invalid Email or Password
     </div>
@@ -21,6 +26,11 @@
         </button>
       </div>
     </form>
+  </div>
+  <div v-else class="container login-container">
+    <div class="logged-in-message">
+      <p>You are already logged in.</p>
+    </div>
   </div>
 </template>
 
@@ -95,6 +105,9 @@ export default {
 </script>
 
 <style scoped>
+h4{
+color: darkolivegreen;
+}
 .container.login-container {
   height: 100%;
   width: 100%;
@@ -121,7 +134,13 @@ export default {
 .login-form .btn {
   width: 100%; /* Make buttons take full width of the form */
 }
+.welcome-message {
+  margin-bottom: 30px;
+}
 
+.login-prompt {
+  margin-bottom: 10px;
+}
 .login-container {
   display: contents;
   flex-direction: column;
@@ -134,5 +153,15 @@ export default {
   width: 20%;
   margin: 0 auto;
   position: right;
+}
+
+.logged-in-message {
+  text-align: center;
+  font-size: 30px;
+  color: #008773;
+  padding: 40px;
+  background-color: #f3f3f3;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 </style>

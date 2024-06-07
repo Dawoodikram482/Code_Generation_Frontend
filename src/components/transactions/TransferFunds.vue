@@ -48,6 +48,7 @@
 
 <script>
 import instance from "../../../axios.js";
+import {Notify} from "quasar";
 
 export default {
   data() {
@@ -65,37 +66,57 @@ export default {
   },
   methods: {
     fetchAccounts() {
-      this.loading = true; // Set loading to true before making the request
-      instance.get('/accounts', { params: { limit: 50, offset: 0 } })
+      this.loading = true;
+      instance.get('/accounts/status', { params: { limit: 50, offset: 0 } })
           .then(response => {
             this.accounts = response.data;
-            this.loading = false; // Set loading to false after receiving the response
+            this.loading = false;
           })
           .catch(error => {
             this.errorMessage = error.message;
-            this.loading = false; // Set loading to false in case of error
+            this.loading = false;
           });
     },
     submitTransfer() {
-      this.loading = true; // Set loading to true before making the request
+      this.loading = true;
+      this.errorMessage = null; // Clear any previous error messages
       instance.post('/transactions', {
         accountFrom: this.selectedSourceAccount,
         accountTo: this.selectedDestinationAccount,
         amount: this.transferAmount
       }).then(response => {
-            // Reset form fields and loading state
-            this.selectedSourceAccount = response.data.selectedSourceAccount;
-            this.selectedDestinationAccount = response.data.selectedDestinationAccount;
-            this.transferAmount = response.data.transferAmount;
-            this.loading = false;
-
-            // Show success message or perform any other action
-            alert('Transfer successful!');
-          }).catch(error => {
-            this.errorMessage = error.response.data.message; // Display error message
-            this.loading = false; // Set loading to false
-          });
-    }
+        this.loading = false;
+        // Reset form fields
+        this.selectedSourceAccount = '';
+        this.selectedDestinationAccount = '';
+        this.transferAmount = null;
+        // Show success notification
+        this.showSuccessNotification('Transfer successful!');
+      }).catch(error => {
+        this.loading = false;
+        this.errorMessage = error.errorMessage;
+        if (error.response && error.response.status === 400) {
+          this.showErrorNotification('The amount you are trying to transfer will result in a balance lower than the absolute limit for this account.');
+        } else {
+          this.errorMessage = error.response?.data?.message || 'An error occurred while processing your request.';
+        }
+      });
+    },
+    showSuccessNotification(message) {
+      Notify.create({
+        color: 'positive',
+        position: 'top',
+        message: message
+      });
+    },
+    showErrorNotification(errorMessage) {
+      Notify.create({
+        color: 'negative',
+        position: 'top',
+        message: errorMessage,
+        icon: ''
+      });
+    },
   }
 }
 </script>
