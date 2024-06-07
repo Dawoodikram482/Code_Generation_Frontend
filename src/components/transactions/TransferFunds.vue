@@ -67,7 +67,7 @@ export default {
   methods: {
     fetchAccounts() {
       this.loading = true;
-      instance.get('/accounts', { params: { limit: 50, offset: 0 } })
+      instance.get('/accounts/status', { params: { limit: 50, offset: 0 } })
           .then(response => {
             this.accounts = response.data;
             this.loading = false;

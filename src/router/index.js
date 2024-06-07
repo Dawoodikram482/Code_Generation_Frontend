@@ -5,7 +5,7 @@ import Registration from '../components/Authentication/Registration.vue'
 import AccountsOverview from "@/components/AccountsOverview.vue";
 import TransferFunds from "@/components/transactions/TransferFunds.vue";
 import PendingApprovals from "@/components/PendingApprovals.vue";
-
+import TransactionHistory from "@/components/transactions/TransactionHistory.vue";
 import ATM from "@/components/ATM/ATM.vue";
 import ATMLogin from "@/components/ATM/ATMLogin.vue";
 import ATMAccounts from "@/components/ATM/ATMAccounts.vue";
@@ -96,6 +96,12 @@ const router = createRouter({
       name: 'Pending Approvals',
       meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
       component: PendingApprovals
+    },
+    {
+      path: '/transactions',
+      name: 'Transaction History',
+      meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
+      component: TransactionHistory
     }
   ]
 });
