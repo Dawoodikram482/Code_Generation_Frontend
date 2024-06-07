@@ -71,7 +71,7 @@ export default {
             route = "/accountsOverview";
             break;
           case 'ROLE_CUSTOMER':
-            route = "/registration";
+            route = "/CustomerAccountOverview";
             break;
             // Add more cases for other roles if needed
           default:
@@ -153,7 +153,6 @@ color: darkolivegreen;
   display: block;
   width: 20%;
   margin: 0 auto;
-  position: right;
 }
 
 .logged-in-message {

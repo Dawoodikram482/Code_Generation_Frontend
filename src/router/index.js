@@ -12,6 +12,8 @@ import ATMAccounts from "@/components/ATM/ATMAccounts.vue";
 import ATMActions from "@/components/ATM/ATMActions.vue";
 import ATMTransaction from "@/components/ATM/ATMTransaction.vue";
 import ATMThankYou from "@/components/ATM/ATMThankYou.vue";
+import CustomerAccountOverview from "@/components/CustomerAccountOverview.vue";
+import RegistrationSuccessful from "@/views/RegistrationSuccessful.vue";
 
 import {useUserSessionStore} from "@/stores/UserSession.js";
 
@@ -67,8 +69,23 @@ const router = createRouter({
       component: Login
     },
     {
-      path: '/registration',
-      name: 'registrationn',
+      path: '/Registration',
+      name: 'Registration',
+      component: Registration
+    },
+    {
+      path: '/CustomerAccountOverview',
+      name: 'CustomerAccountOverview',
+      component: CustomerAccountOverview
+    },
+    {
+      path: '/RegistrationSuccessful',
+      name: 'RegistrationSuccessful',
+      component: RegistrationSuccessful
+    },
+    {
+      path: '/Registration',
+      name: 'Registrationn',
       component: Registration
     },
     {
