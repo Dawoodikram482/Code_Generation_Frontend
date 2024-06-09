@@ -14,13 +14,11 @@
 
   const isLoggedIn = computed(() => userRole.isLoggedIn.value.value);
 
-  onMounted(() => {
-    if (router.currentRoute.value.path === '/atm' && isLoggedIn) {
-      router.replace({ name: 'atm-accounts' });
-    } else if (router.currentRoute.value.path.startsWith('/atm') && !isLoggedIn) {
-      router.replace({ name: 'atm-login' });
-    }
-  });
+  if (router.currentRoute.value.path === '/atm' && isLoggedIn) {
+    router.replace({ name: 'atm-accounts' });
+  } else if (router.currentRoute.value.path.startsWith('/atm') && !isLoggedIn) {
+    router.replace({ name: 'atm-login' });
+  }
 </script>
 
 <style scoped>

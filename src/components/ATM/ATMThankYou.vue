@@ -2,7 +2,7 @@
   <div class="atm-dashboard">
     <i class="fa-regular fa-circle-check"></i>
     <h1>
-      Thank You {{ username }}!
+      Thank You {{ firstName }}!
     </h1>
 
     <div class="buttons">
@@ -15,28 +15,21 @@
 </template>
 
 <script>
-import axiosInstance from "../../../axios.js";
+import {useAccountStore} from "@/stores/account.js";
+import {computed, onMounted, ref} from "vue";
 
 export default {
-  data() {
+  setup() {
+    const accountStore = useAccountStore();
+    const firstName = computed(() => accountStore.firstName);
+
+    onMounted(async () => {
+      await accountStore.getAccounts();
+    });
+
     return {
-      username: ""
+      firstName,
     };
-  },
-  created() {
-    this.getAccounts();
-  },
-  methods: {
-    getAccounts() {
-      axiosInstance.get("/users/myAccountOverview")
-          .then(response => {
-            console.log(response.data)
-            this.username = response.data.firstName + " " + response.data.lastName;
-          })
-          .catch(error => {
-            console.error(error);
-          });
-    }
   }
 };
 </script>
@@ -51,6 +44,7 @@ export default {
   gap: 30px;
   margin-top: 20px;
   text-align: center;
+  align-items: center;
 }
 
 h1 {

@@ -14,7 +14,7 @@ const { isLoggedIn, forEmployee, forCustomer } = useUserRole();
 </script>
 
 <template>
-  <div>
+  <div class="page">
     <!-- Show the Navbar only if the user is logged in -->
     <template v-if="isLoggedIn">
       <!-- Show the Navbar based on user role -->
@@ -31,8 +31,12 @@ const { isLoggedIn, forEmployee, forCustomer } = useUserRole();
 </template>
 
 <style scoped>
+.page {
+  display: flex;
+}
+
 .content {
-  margin-left: 100px;
-  padding: 20px;
+  width: 100%;
+  padding: 50px;
 }
 </style>

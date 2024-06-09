@@ -1,7 +1,7 @@
 <template>
   <div class="atm-dashboard">
     <div>
-      <h1>Hey {{ username }}!</h1>
+      <h1>Hey {{ firstName }}!</h1>
       <h2>How much do you want to {{ transactionType }}?</h2>
     </div>
 
@@ -18,7 +18,7 @@
         <input v-model.number="amount" type="number" placeholder="Enter amount" />
       </div>
       <div class="buttons">
-        <a :href="`/atm/actions?accountNumber=${selectedAccount.iban}`">Back</a>
+        <router-link :to="{ path: '/atm/actions', query: { accountNumber: selectedAccount.iban } }">Back</router-link>
         <button @click="handleTransaction">{{ transactionType }}</button>
       </div>
     </div>
@@ -26,8 +26,10 @@
 </template>
 
 <script>
-import { useUserSessionStore } from '@/stores/UserSession';
-import axiosInstance from "../../../axios.js";
+import { computed, onMounted, ref } from 'vue';
+import { useAccountStore } from '@/stores/account.js';
+import router from "@/router/index.js";
+import {Notify} from "quasar";
 
 export default {
   props: {
@@ -43,47 +45,40 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      currentAccounts: [],
-      selectedAccount: null,
-      amount: 0,
-      username: ""
+  setup(props, { root }) {
+    const accountStore = useAccountStore();
+    const firstName = computed(() => accountStore.firstName);
+    const currentAccounts = computed(() => accountStore.currentAccounts);
+    const selectedAccount = computed(() => currentAccounts.value.find(account => account.iban === props.accountNumber));
+    const amount = ref(0);
+
+    onMounted(async () => {
+      await accountStore.getAccounts();
+    });
+
+    const handleTransaction = async () => {
+      try {
+        await accountStore.handleTransaction(props.transactionType, props.accountNumber, amount.value);
+        alert(`${props.transactionType.charAt(0).toUpperCase() + props.transactionType.slice(1)} successful!`);
+        router.push({ path: '/atm/thank-you' });
+      } catch (error) {
+        console.error(error);
+        Notify.create({
+          color: 'negative',
+          position: 'top',
+          message: `Failed to ${props.transactionType}. ${error.response.data}`,
+          icon: ''
+        });
+      }
     };
-  },
-  created() {
-    this.getAccounts();
-  },
-  methods: {
-    getAccounts() {
-      axiosInstance.get("/users/myAccountOverview")
-          .then(response => {
-            this.username = response.data.firstName + " " + response.data.lastName;
-            const accounts = response.data.accounts;
-            this.currentAccounts = accounts;
-            this.selectedAccount = accounts.find(account => account.iban === this.accountNumber);
-          })
-          .catch(error => {
-            console.error(error);
-          });
-    },
-    handleTransaction() {
-      const endpoint = this.transactionType === 'withdraw' ? '/transactions/atm/withdraw' : '/transactions/atm/deposit';
-      axiosInstance.post(endpoint, {
-        IBAN: this.accountNumber,
-        amount: this.amount,
-        currencyType: "EURO"
-      })
-          .then(response => {
-            alert(`${this.transactionType.charAt(0).toUpperCase() + this.transactionType.slice(1)} successful!`);
-            this.getAccounts();
-            this.$router.push({ path: '/atm/thank-you' });
-          })
-          .catch(error => {
-            console.error(error);
-            alert(`Failed to ${this.transactionType}. ${error.response.data}`);
-          });
-    }
+
+    return {
+      firstName,
+      currentAccounts,
+      selectedAccount,
+      amount,
+      handleTransaction
+    };
   }
 };
 </script>
