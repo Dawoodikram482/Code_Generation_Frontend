@@ -16,6 +16,7 @@
                   <th>Account Status</th>
                   <th>Customer Name</th>
                   <th>Customer Email</th>
+                  <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -242,6 +243,11 @@ h2 {
 
 .table-container {
   flex: 1;
+  margin-right: 120px;
+}
+
+.table-container:has(+ *) {
+  margin-right: 0;
 }
 
 table {

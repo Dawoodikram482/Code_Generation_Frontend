@@ -48,11 +48,6 @@ this.$router.push('/login'); // Redirect to the login page after logout
 }
 
 .sidebar {
-  position: fixed;
-  background-color: #008773;
-  top: 0;
-  left: 0;
-  bottom: 0;
   width: 250px;
   padding: 20px;
 }
@@ -75,8 +70,12 @@ this.$router.push('/login'); // Redirect to the login page after logout
 }
 
 .nav-link:hover, .router-link-exact-active {
-  color: #008773;
-  background-color: #FFF;
+  background-color: #008773;
+  color: #FFF;
+}
+
+a:hover {
+  background: unset;
 }
 
 </style>

@@ -1,9 +1,9 @@
 <template>
-
-  <h2>
-    Welcome back
-  </h2>
   <div class="overview-container">
+    <h2>
+      Welcome back
+    </h2>
+
     <div class="account-details">
       <div>First Name: {{ firstName }}</div>
       <div>Last Name: {{ lastName }}</div>
@@ -24,9 +24,9 @@
 
 
     <div class="flex justify-start my-4">
-      <button class="transfer-button">
+      <router-link to="/transfer" class="transfer-button" tag="button">
         Transfer
-      </button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -73,10 +73,6 @@
 </script>
 
 <style scoped>
-.overview-container {
-  margin-left: 150px;
-}
-
 .account-container {
   background-color: #f5f5f5;
   border-radius: 10px;
@@ -92,6 +88,8 @@
 .account-details {
   display: flex;
   flex-direction: column;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .account-type {
@@ -118,5 +116,6 @@
   border-radius: 0.375rem;
   width: 40%;
   transition: background-color 0.3s;
+  text-align: center;
 }
 </style>

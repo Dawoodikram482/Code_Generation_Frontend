@@ -16,6 +16,7 @@ import CustomerAccountOverview from "@/components/CustomerAccountOverview.vue";
 import RegistrationSuccessful from "@/views/RegistrationSuccessful.vue";
 
 import {useUserSessionStore} from "@/stores/UserSession.js";
+import Transfer from "@/components/transactions/Transfer.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -84,19 +85,6 @@ const router = createRouter({
       component: RegistrationSuccessful
     },
     {
-      path: '/Registration',
-      name: 'Registrationn',
-      component: Registration
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    },
-    {
       path: '/accountsOverview',
       name: 'Accounts Overview',
       meta: { role: ['ROLE_EMPLOYEE']}, // Specify roles needed to access the route
@@ -105,8 +93,14 @@ const router = createRouter({
     {
       path: '/transferFunds',
       name: 'Transfer Funds',
-      meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
+      meta: { role: ['ROLE_EMPLOYEE', 'ROLE_CUSTOMER'] }, // Specify roles needed to access the route
       component: TransferFunds
+    },
+    {
+      path: '/transfer',
+      name: 'Transfer',
+      meta: { role: ['ROLE_EMPLOYEE', 'ROLE_CUSTOMER'] }, // Specify roles needed to access the route
+      component: Transfer
     },
     {
       path: '/approval',
@@ -117,7 +111,7 @@ const router = createRouter({
     {
       path: '/transactions',
       name: 'Transaction History',
-      meta: { role: ['ROLE_EMPLOYEE'] }, // Specify roles needed to access the route
+      meta: { role: ['ROLE_EMPLOYEE', 'ROLE_CUSTOMER'] }, // Specify roles needed to access the route
       component: TransactionHistory
     }
   ]
