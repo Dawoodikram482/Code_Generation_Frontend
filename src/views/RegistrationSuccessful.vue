@@ -2,7 +2,7 @@
   <div class="container">
     <div class="message">
       <h2>Registration <span class="highlight">successful</span></h2>
-      <p>Your account is under processed</p>
+      <p>Your account is under process. Please Wait.</p>
     </div>
   </div>
 </template>
