@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 const instance = axios.create({
     baseURL: 'http://localhost:8080'
 });
@@ -14,4 +15,16 @@ instance.interceptors.request.use(function (config) {
 }, function (error) {
     return Promise.reject(error);
 });
+
+instance.interceptors.response.use(function (response) {
+    return response;
+}, function (error) {
+    if (error.response && error.response.data === "Invalid JWT token") {
+        console.error("Invalid JWT token");
+        localStorage.removeItem('jwt');
+        window.location.href = '/login';
+    }
+    return Promise.reject(error);
+});
+
 export default instance;

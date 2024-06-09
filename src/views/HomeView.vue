@@ -18,7 +18,8 @@
     <h2>How can we help you today?</h2>
       <div class="buttons" v-if="isLoggedIn">
         <router-link to="/atm" class="btn-atm">ATM</router-link>
-        <router-link to="/accountOverview">Dashboard</router-link>
+        <router-link to="/accountsOverview" v-if="forEmployee">Dashboard</router-link>
+        <router-link to="/CustomerAccountOverview" v-if="forCustomer">Dashboard</router-link>
         <a @click="logout">Logout</a>
       </div>
       <div class="buttons" v-else>

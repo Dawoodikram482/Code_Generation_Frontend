@@ -6,49 +6,49 @@
 
     <div class="accounts">
       <h3>Current Accounts</h3>
-      <div
-          v-for="account in currentAccounts"
-          :key="account.iban"
-          class="account"
-          @click="goToActions(account.iban)"
-      >
-        <div>{{ account.iban }}</div>
-        <div>€ {{ account.accountBalance.toFixed(2) }}</div>
+      <div v-if="currentAccounts.length > 0">
+        <div
+            v-for="account in currentAccounts"
+            :key="account.iban"
+            class="account"
+            @click="goToActions(account.iban)"
+        >
+          <div>{{ account.iban }}</div>
+          <div>€ {{ account.accountBalance.toFixed(2) }}</div>
+        </div>
+      </div>
+      <div v-else>
+        <p>You don't have any accounts.</p>
       </div>
     </div>
-    <a href="/" class="back-link">Back to Home Page</a>
+    <router-link to="/" class="back-link">
+      Back to Home Page
+    </router-link>
   </div>
 </template>
 
 <script>
-import axiosInstance from "../../../axios.js";
+import { useAccountStore } from "@/stores/account.js";
+import { onMounted, computed } from 'vue';
+import router from "@/router/index.js";
 
 export default {
-  data() {
-    return {
-      currentAccounts: [],
-      savingsAccounts: []
+  setup() {
+    const accountStore = useAccountStore();
+    const currentAccounts = computed(() => accountStore.currentAccounts);
+
+    onMounted(async () => {
+      await accountStore.getAccounts();
+    });
+
+    const goToActions = (iban) => {
+      router.push({ name: 'atm-actions', query: { accountNumber: iban } });
     };
-  },
-  created() {
-    this.getAccounts();
-  },
-  methods: {
-    getAccounts() {
-      axiosInstance.get("/users/myAccountOverview")
-          .then(response => {
-            console.log(response.data)
-            const accounts = response.data.accounts;
-            this.currentAccounts = accounts.filter(account => account.accountType === 'CURRENT');
-            this.savingsAccounts = accounts.filter(account => account.accountType === 'SAVINGS');
-          })
-          .catch(error => {
-            console.error(error);
-          });
-    },
-    goToActions(iban) {
-      this.$router.push({ path: '/atm/actions', query: { accountNumber: iban } });
-    }
+
+    return {
+      currentAccounts,
+      goToActions
+    };
   }
 };
 </script>
@@ -106,6 +106,7 @@ h3 {
 
 .account {
   display: inline-flex;
+  width: 100%;
   padding: 20px;
   align-items: center;
   justify-content: space-between;
@@ -124,5 +125,12 @@ h3 {
 
 .account:hover {
   background: rgba(0, 135, 115, 0.90);
+}
+
+.back-link {
+  background: rgba(0, 135, 115, 0.70);
+  color: #FFFFFF;
+  padding: 1rem;
+  border-radius: 10px;
 }
 </style>

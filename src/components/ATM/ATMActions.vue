@@ -1,7 +1,7 @@
 <template>
   <div class="atm-dashboard">
     <div>
-      <h1>Hey <span>{{ username }}</span>!</h1>
+      <h1>Hey <span>{{ firstName }}</span>!</h1>
       <h2>What would you like to do?</h2>
     </div>
 
@@ -15,8 +15,8 @@
       </div>
       <div class="buttons">
         <a href="/atm/accounts" class="btn-back">Back</a>
-        <a :href="`/atm/transaction/withdraw?accountNumber=${selectedAccount.iban}`">Withdraw</a>
-        <a :href="`/atm/transaction/deposit?accountNumber=${selectedAccount.iban}`">Deposit</a>
+        <router-link :to="{ path: '/atm/transaction/withdraw', query: { accountNumber: selectedAccount.iban } }">Withdraw</router-link>
+        <router-link :to="{ path: '/atm/transaction/deposit', query: { accountNumber: selectedAccount.iban } }">Deposit</router-link>
       </div>
     </div>
 
@@ -28,37 +28,30 @@
 </template>
 
 <script>
-import axiosInstance from "../../../axios.js";
+import { computed, onMounted } from 'vue';
+import { useAccountStore } from "@/stores/account.js";
 
 export default {
+  setup(props) {
+    const accountStore = useAccountStore();
+    const firstName = computed(() => accountStore.firstName);
+    const currentAccounts = computed(() => accountStore.currentAccounts);
+    const selectedAccount = computed(() => currentAccounts.value.find(account => account.iban === props.accountNumber));
+
+    onMounted(async () => {
+      await accountStore.getAccounts();
+    });
+
+    return {
+      firstName,
+      currentAccounts,
+      selectedAccount
+    };
+  },
   props: {
     accountNumber: {
       type: String,
       required: true
-    }
-  },
-  data() {
-    return {
-      currentAccounts: [],
-      selectedAccount: null,
-      username: ""
-    };
-  },
-  created() {
-    this.getAccounts();
-  },
-  methods: {
-    getAccounts() {
-      axiosInstance.get("/users/myAccountOverview")
-          .then(response => {
-            this.username = response.data.firstName + " " + response.data.lastName;
-            const accounts = response.data.accounts;
-            this.currentAccounts = accounts;
-            this.selectedAccount = accounts.find(account => account.iban === this.accountNumber);
-          })
-          .catch(error => {
-            console.error(error);
-          });
     }
   }
 };

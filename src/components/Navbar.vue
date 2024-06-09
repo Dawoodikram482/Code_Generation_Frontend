@@ -6,7 +6,7 @@
   <div>
     <!-- Sidebar -->
     <div class="sidebar">
-      <img class="logo" src="/src/assets/logo.png">
+      <a href="/"><img class="logo" src="/src/assets/logo.png"></a>
       <ul class="nav flex-column">
         <li class="nav-item" v-for="(item, index) in sidebarItems" :key="index">
           <router-link :to="item.route" v-if="item.label !== 'Logout'" class="nav-link">
@@ -31,10 +31,9 @@
     data() {
       return {
         sidebarItems: [
-          { icon: '<i class="fa-solid fa-house-chimney"></i>', label: 'Overview', route: '/' },
+          { icon: '<i class="fa-solid fa-house-chimney"></i>', label: 'Overview', route: '/CustomerAccountOverview' },
           { icon: '<i class="fa-solid fa-arrow-right-arrow-left"></i>', label: 'Transfer', route: '/transfer' },
           { icon: '<i class="fa-solid fa-clock-rotate-left"></i>', label: 'Transaction History', route: '/transactions' },
-          { icon: '<i class="fa-solid fa-user"></i>', label: 'Account Details', route: '/account' },
           { icon: '<i class="fa-solid fa-sign-out-alt"></i>', label: 'Logout', route: '/logout'}
         ]
       };
@@ -55,10 +54,6 @@
   }
 
   .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
     width: 250px;
     padding: 20px;
   }
@@ -83,5 +78,9 @@
   .nav-link:hover, .router-link-exact-active {
     background-color: #008773;
     color: #FFF;
+  }
+
+  a:hover {
+    background: unset;
   }
 </style>
