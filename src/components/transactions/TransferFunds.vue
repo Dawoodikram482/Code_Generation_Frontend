@@ -28,7 +28,8 @@
         <!-- Transfer Amount -->
         <div class="form-group">
           <label for="transfer-amount">Transfer Amount:</label>
-          <input type="number" id="transfer-amount" v-model="transferAmount" class="form-control" :min="0" :max="500" step="1">
+          <input type="number" id="transfer-amount" v-model="transferAmount" class="form-control" :min="0" :max="500"
+                 step="1">
         </div>
 
         <!-- Loading Indicator -->
@@ -45,18 +46,20 @@
 </template>
 
 
-
 <script>
 import instance from "../../../axios.js";
 import {Notify} from "quasar";
+import {useAccountStore} from "@/stores/account.js";
 
 export default {
   data() {
     return {
+      transaction: {
+        selectedSourceAccount: '', // Define selectedSourceAccount
+        selectedDestinationAccount: '', // Define selectedDestinationAccount
+        transferAmount: null
+      },
       accounts: [],
-      selectedSourceAccount: '', // Define selectedSourceAccount
-      selectedDestinationAccount: '', // Define selectedDestinationAccount
-      transferAmount: null, // Define transferAmount
       loading: false, // Add loading variable
       errorMessage: null // Add errorMessage variable
     };
@@ -65,42 +68,41 @@ export default {
     this.fetchAccounts();
   },
   methods: {
-    fetchAccounts() {
+    async fetchAccounts() {
       this.loading = true;
-      instance.get('/accounts/status', { params: { limit: 50, offset: 0 } })
-          .then(response => {
-            this.accounts = response.data;
-            this.loading = false;
-          })
-          .catch(error => {
-            this.errorMessage = error.message;
-            this.loading = false;
-          });
+      const AccountStore = useAccountStore();
+      try {
+        await AccountStore.getActiveAccounts();
+        this.accounts = AccountStore.accounts;
+      } catch (error) {
+        this.errorMessage = error.response?.data?.message || 'An error occurred while fetching accounts.';
+      }
     },
     submitTransfer() {
       this.loading = true;
       this.errorMessage = null; // Clear any previous error messages
-      instance.post('/transactions', {
-        accountFrom: this.selectedSourceAccount,
-        accountTo: this.selectedDestinationAccount,
-        amount: this.transferAmount
-      }).then(response => {
-        this.loading = false;
-        // Reset form fields
-        this.selectedSourceAccount = '';
-        this.selectedDestinationAccount = '';
-        this.transferAmount = null;
-        // Show success notification
-        this.showSuccessNotification('Transfer successful!');
-      }).catch(error => {
-        this.loading = false;
-        this.errorMessage = error.errorMessage;
-        if (error.response && error.response.status === 400) {
-          this.showErrorNotification('The amount you are trying to transfer will result in a balance lower than the absolute limit for this account.');
-        } else {
-          this.errorMessage = error.response?.data?.message || 'An error occurred while processing your request.';
-        }
-      });
+      
+      // instance.post('/transactions', {
+      //   accountFrom: this.selectedSourceAccount,
+      //   accountTo: this.selectedDestinationAccount,
+      //   amount: this.transferAmount
+      // }).then(response => {
+      //   this.loading = false;
+      //   // Reset form fields
+      //   this.selectedSourceAccount = '';
+      //   this.selectedDestinationAccount = '';
+      //   this.transferAmount = null;
+      //   // Show success notification
+      //   this.showSuccessNotification('Transfer successful!');
+      // }).catch(error => {
+      //   this.loading = false;
+      //   this.errorMessage = error.errorMessage;
+      //   if (error.response && error.response.status === 400) {
+      //     this.showErrorNotification('The amount you are trying to transfer will result in a balance lower than the absolute limit for this account.');
+      //   } else {
+      //     this.errorMessage = error.response?.data?.message || 'An error occurred while processing your request.';
+      //   }
+      // });
     },
     showSuccessNotification(message) {
       Notify.create({
@@ -122,18 +124,19 @@ export default {
 </script>
 
 <style scoped>
-h2{
+h2 {
   color: #008773;
   font-family: serif;
 }
-.transfer-funds-form{
- padding-top: 50px;
+
+.transfer-funds-form {
+  padding-top: 50px;
   width: 700px;
 
 
 }
 
-.form-group{
+.form-group {
   padding: 20px 0 20px 20px;
 }
 
