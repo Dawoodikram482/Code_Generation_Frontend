@@ -62,6 +62,15 @@ export const useAccountStore = defineStore('account', {
                 console.error('Failed to search IBAN by customer name:', error);
                 return [];
             }
+        },
+        async getActiveAccounts(){
+            try {
+                const response = await axiosInstance.get('/accounts/status');
+                this.accounts = response.data.accounts;
+            } catch (error) {
+                console.error('Failed to get active accounts:', error);
+                return [];
+            }
         }
     },
 });
