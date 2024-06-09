@@ -1,80 +1,41 @@
 <template>
   <section class="vh-100 gradient-custom">
     <div class="alert alert-danger" v-if="errorMessage">{{ errorMessage }}</div>
-    <div class="container h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-12">
-          <div class="card-body px-5 text-center max-w-6xl mx-auto">
-            <div class="mb-md-5 mt-md-4 pb-5">
-              <div class="mb-4 flex flex-col items-center justify-center">
+    <div class="registration-container">
                 <img src="/src/assets/logo.png" alt="Logo" class="w-24 items-end justify-end mx-auto d-block" />
-                <h2> Register as a new client</h2>
+                <h2 class="text-center"> Register as a new client</h2>
               </div>
-              <div class="bg-gray-100 p-6 rounded-md grid grid-cols-2 gap-4 max-w-3xl mx-auto">
-                <div class="form-outline form-white">
-                  <div class="flex flex-col w-5/6 mx-auto">
-                    <label class="form-label font-bold text-left" for="inputFirstName">First Name</label>
-                    <input id="inputFirstName" v-model="firstName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+    <br>
+              <form class="registration-form">
+                <label class="form-field" for="inputFirstName">First Name</label>
+                <input id="inputFirstName" v-model="firstName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+
+                <label class="form-field" for="inputLastName">Last Name</label>
+                <input id="inputLastName" v-model="lastName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+
+                <label class="form-field" for="inputEmail">Email</label>
+                <input id="inputEmail" v-model="email" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+
+                <label class="form-field" for="inputPhoneNumber">Phone Number</label>
+                <input id="inputPhoneNumber" v-model="phoneNumber" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+
+                <label class="form-field" for="inputBSN">BSN</label>
+                <input id="inputBSN" v-model="bsn" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+
+                <label for="inputPassword" class="form-field">Create a password</label>
+                <div class="input-group w-full">
+                  <input type="password" v-model="password" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" id="inputPassword" />
+                  <div class="input-group-append">
                   </div>
                 </div>
-
-                <div class="form-outline form-white">
-                  <div class="flex flex-col w-5/6 mx-auto">
-                    <label class="form-label font-bold text-left" for="inputLastName">Last Name</label>
-                    <input id="inputLastName" v-model="lastName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
-                  </div>
+              </form>
+                <div class="button-container">
+                  <button class="registerButton" name="registerButton" id="registerButton" @click="register" type="submit">Register
+                  </button>
+                  <br>
+                  <p href="/login">Already have an account? <a @click="login" class="text-white-50 items-center fw-bold">Log In</a></p>
                 </div>
 
-                <div class="form-outline form-white">
-                  <div class="flex flex-col w-5/6 mx-auto">
-                    <label class="form-label font-bold text-left" for="inputEmail">Email</label>
-                    <input id="inputEmail" v-model="email" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
-                  </div>
-                </div>
-
-                <div class="form-outline form-white">
-                  <div class="flex flex-col w-5/6 mx-auto">
-                    <label class="form-label font-bold text-left" for="inputPhoneNumber">Phone Number</label>
-                    <input id="inputPhoneNumber" v-model="phoneNumber" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
-                  </div>
-                </div>
-
-                <div class="form-outline form-white">
-                  <div class="flex flex-col w-5/6 mx-auto">
-                    <label class="form-label font-bold text-left" for="inputBSN">BSN</label>
-                    <input id="inputBSN" v-model="bsn" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
-                  </div>
-                </div>
-
-                <div class="form-outline form-white mb-3">
-                  <div class="flex flex-col w-5/6 mx-auto">
-                    <label for="inputPassword" class="form-label font-bold text-left">Create a password</label>
-                    <div class="input-group w-full">
-                      <input type="password" v-model="password" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" id="inputPassword" />
-                      <div class="input-group-append">
-                        <!-- <button class="btn btn-primary w-full" disabled type="button" v-if="loading">
-                          <span aria-hidden="true" class="spinner-grow spinner-grow-sm" role="status"></span>
-                          Show password
-                        </button> -->
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-              <button class="registerButton" name="registerButton" id="registerButton" @click="register" type="submit">Register
-              </button>
-
-            </div>
-
-            <div>
-              <p class="mb-0 items">Already have an account? <a @click="login" class="text-white-50 items-center fw-bold">Log In</a></p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </section>
   <popup v-if="showPopup" :show="showPopup" @close="showPopup = false" />
 </template>
@@ -83,6 +44,7 @@
 import axios from 'axios';
 import Popup from '@/components/UserAlreadyExist.vue';
 import router from '@/router';
+import axiosInstance from "../../../axios.js";
 export default {
   name: 'Register',
   components: {
@@ -106,7 +68,7 @@ export default {
       this.loading = true;
       this.errorMessage = '';
       try {
-        const response = await axios.post('http://localhost:8080/users/register', {
+        const response = await axiosInstance.post('/users/register', {
           firstName: this.firstName,
           lastName: this.lastName,
           email: this.email,
@@ -144,6 +106,29 @@ export default {
 </script>
 
 <style>
+
+.registration-container {
+  display: contents;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 50%;
+}
+
+.button-container {
+  margin: 0 auto;
+}
+.registration-form {
+  max-width: 400px; /* Set the maximum width for the form */
+  margin: 0 auto; /* Center the form horizontally */
+  padding: 20px; /* Add padding for better appearance */
+  border: 1px solid #ccc; /* Optional: Add a border for better visibility */
+  border-radius: 8px; /* Optional: Rounded corners */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better appearance */
+}
+.form-field {
+  margin-bottom: 15px;
+}
+
 body, #app {
   display: block;
 }
@@ -151,11 +136,9 @@ body, #app {
 .registerButton {
   background-color: #f59e0b;
   font-weight: 600;
+  margin: 0 auto;
 }
-.card-body {
-  background-color: #fff;
-  border-radius: 1rem;
-}
+
 
 .form-control {
   background-color: #f3f3f3;
@@ -230,6 +213,9 @@ body, #app {
 
 .custom-select option[value=""] {
   color: #999;
+}
+.text-center {
+  font-weight: bolder;
 }
 
 
