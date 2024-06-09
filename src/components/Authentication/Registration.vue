@@ -7,17 +7,22 @@
               </div>
     <br>
               <form class="registration-form">
+
                 <label class="form-field" for="inputFirstName">First Name</label>
-                <input id="inputFirstName" v-model="firstName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                <input id="inputFirstName" v-model="firstName" @input="validateFirstName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                <span v-if="firstNameError" class="error-message">{{ firstNameError }}</span>
 
                 <label class="form-field" for="inputLastName">Last Name</label>
-                <input id="inputLastName" v-model="lastName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                <input id="inputLastName" v-model="lastName" @input="validateLastName" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                <span v-if="lastNameError" class="error-message">{{ lastNameError }}</span>
 
                 <label class="form-field" for="inputEmail">Email</label>
-                <input id="inputEmail" v-model="email" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                <input id="inputEmail" v-model="email" @input="validateEmail" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                <span v-if="emailError" class="error-message">{{ emailError }}</span>
 
                 <label class="form-field" for="inputPhoneNumber">Phone Number</label>
-                <input id="inputPhoneNumber" v-model="phoneNumber" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                <input id="inputPhoneNumber" v-model="phoneNumber" @input="validatePhoneNumber" type="number" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
+                <span v-if="phoneNumberError" class="error-message">{{ phoneNumberError }}</span>
 
                 <label class="form-field" for="inputBSN">BSN</label>
                 <input id="inputBSN" v-model="bsn" type="text" class="form-control bg-white border border-black rounded-sm focus:outline-none focus:ring-0 focus:border-black h-10 w-full" />
@@ -29,12 +34,11 @@
                   </div>
                 </div>
               </form>
-                <div class="button-container">
-                  <button class="registerButton" name="registerButton" id="registerButton" @click="register" type="submit">Register
-                  </button>
-                  <br>
-                  <p href="/login">Already have an account? <a @click="login" class="text-white-50 items-center fw-bold">Log In</a></p>
-                </div>
+
+              <div class = button-container>
+                <button class="registerButton" :disabled="!isFormValid" name="registerButton" id="registerButton" @click="register" type="submit">Register
+                </button>
+              </div>
 
   </section>
   <popup v-if="showPopup" :show="showPopup" @close="showPopup = false" />
@@ -62,9 +66,21 @@ export default {
       loading: false,
       showPopup: false
     };
+
   },
+
+  computed: {
+    isFormValid() {
+      return this.firstName && this.lastName && this.email && this.password && this.bsn && this.phoneNumber;
+    }
+  },
+
   methods: {
     async register() {
+      if (!this.isFormValid) {
+        this.errorMessage = 'Please fill in all fields.';
+        return;
+      }
       this.loading = true;
       this.errorMessage = '';
       try {
@@ -97,11 +113,28 @@ export default {
         this.loading = false;
       }
     },
+    validateFirstName() {
+      const regex = /^[A-Za-z]+$/;
+      this.firstNameError = !regex.test(this.firstName) ? 'First name cannot contain numbers or special characters' : '';
+    },
+    validateLastName() {
+      const regex = /^[A-Za-z]+$/;
+      this.lastNameError = !regex.test(this.lastName) ? 'Last name cannot contain numbers or special characters' : '';
+    },
+
     validateEmail(email) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
-    }
+    },
+
+    validatePhoneNumber() {
+      const regex = /^[0-9]+$/;
+      this.phoneNumberError = !regex.test(this.phoneNumber) ? 'Phone number must be numeric' : ''; },
+
+
   }
+
+
 };
 </script>
 
@@ -115,7 +148,9 @@ export default {
 }
 
 .button-container {
-  margin: 0 auto;
+  padding-top: 20px;
+  height: 200px;
+  text-align: center;
 }
 .registration-form {
   max-width: 400px; /* Set the maximum width for the form */
@@ -126,14 +161,19 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better appearance */
 }
 .form-field {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
+
+.form
 
 body, #app {
   display: block;
 }
 
 .registerButton {
+  padding: 0.8rem 1rem 0.7rem;
+  cursor: pointer;
+  text-transform: capitalize;
   background-color: #f59e0b;
   font-weight: 600;
   margin: 0 auto;
