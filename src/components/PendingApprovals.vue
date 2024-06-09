@@ -12,16 +12,13 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="user in users" :key="user.id">
+      <tr v-for="user in pendingUsers" :key="user.id">
         <td>{{ user.bsn }}</td>
         <td>{{ user.firstName }} {{ user.lastName }}</td>
         <td>{{ user.email }}</td>
         <td class="buttons">
           <div>
-          <button @click="approveUser(user)">Approve</button>
-          </div>
-          <div>
-          <button @click="rejectUser(user)">Reject</button>
+            <button @click="approveUser(user)">Approve</button>
           </div>
         </td>
       </tr>
@@ -31,65 +28,36 @@
 </template>
 
 <script>
-import axiosInstance from '/axios.js';
+import { usePendingApprovalsStore } from '@/stores/storeForEmployee.js';
+import { computed, onMounted } from "vue";
 
 export default {
-  data() {
+  setup() {
+    const store = usePendingApprovalsStore();
+
+    const pendingUsers = computed(() => store.users);
+    const loading = store.loading;
+
+    onMounted(async () => {
+      await fetchPendingApprovals();
+    });
+
+    const fetchPendingApprovals = async () => {
+      await store.fetchPendingApprovals();
+    };
+
+    const approveUser = async (user) => {
+      await store.approveUser(user);
+      await store.fetchPendingApprovals();
+    };
+
     return {
-      users: [],
-      loading: true,
-      error: null
+      pendingUsers,
+      loading,
+      fetchPendingApprovals,
+      approveUser,
     };
   },
-  created() {
-    this.fetchPendingApprovals();
-  },
-  methods: {
-    fetchPendingApprovals() {
-      axiosInstance
-          .get('/users/pending-approvals', {
-            params: {
-              limit: 50,
-              offset: 0,
-
-            }
-          })
-          .then(response => {
-            this.users = response.data;
-            this.loading = false;
-          })
-          .catch(error => {
-            this.error = error.message;
-            this.loading = false;
-          });
-    },
-    approveUser(user) {
-      this.loading = true;
-      axiosInstance.post(`/users/approve/${user.id}`, {
-        accountHolderId: user.id,
-        dayLimit: user.dayLimit,  // Adjust these values as necessary
-        transactionLimit: user.transactionLimit,
-        accountType: ''  // This will be used in the backend logic
-      })
-          .then(response => {
-            // Use the data from the response if needed
-            this.loading = false;
-            // Remove the user from the list
-            this.users = this.users.filter(u => u.id !== user.id);
-            // Show success message or perform any other action
-            alert('User approved successfully.');
-          })
-          .catch(error => {
-            this.error = error.response?.data?.message || 'An error occurred';
-            this.loading = false;
-            // Show error message
-            alert('Failed to approve user.');
-          });
-    },
-    rejectUser(user) {
-      // Implement reject user functionality
-    }
-  }
 };
 </script>
 
@@ -108,14 +76,14 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th, td{
   padding: 10px;
   border-bottom: 1px solid #ddd;
 }
 td{
   width: 50%;
 }
-th {
+th{
   background-color: #f2f2f2;
   text-align: left;
 }
@@ -128,7 +96,7 @@ button {
   color: #fff;
   border-radius: 3px;
 }
-.buttons{
+.buttons {
   width: 500px;
 }
 button:hover {
