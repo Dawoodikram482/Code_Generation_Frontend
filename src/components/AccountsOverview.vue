@@ -111,8 +111,13 @@
 </template>
 
 <script>
-import axiosInstance from '/axios.js';
-import axios from 'axios';
+import {
+  fetchAccountsAndTransactions,
+  closeAccount,
+  updateAbsoluteLimit,
+  updateDayLimit
+} from '../stores/accoountsOverview.js';
+import axios from "axios";
 
 export default {
   data() {
@@ -127,7 +132,7 @@ export default {
     };
   },
   created() {
-    this.fetchAccountsAndTransactions();
+    this.loadAccountsAndTransactions();
   },
   computed: {
     filteredAccounts() {
@@ -139,11 +144,8 @@ export default {
     }
   },
   methods: {
-    fetchAccountsAndTransactions() {
-      axios.all([
-        axiosInstance.get('/accounts/status', { params: { limit: 50, offset: 0 } }),
-        axiosInstance.get('/transactions')
-      ])
+    loadAccountsAndTransactions() {
+      fetchAccountsAndTransactions()
           .then(axios.spread((accountsResponse, transactionsResponse) => {
             this.accounts = accountsResponse.data;
             this.transactions = transactionsResponse.data;
@@ -156,16 +158,13 @@ export default {
     },
     closeAccount(iban) {
       if (confirm("Are you sure you want to close this account?")) {
-        axiosInstance.post(`/accounts/closeAccount/${iban}`)
+        closeAccount(iban)
             .then(response => {
-              // Handle successful account closure
               alert("Account closed successfully!");
               this.selectedUser = null;
-              // Reload accounts after closure
-              this.fetchAccountsAndTransactions();
+              this.loadAccountsAndTransactions();
             })
             .catch(error => {
-              // Handle error
               alert("Failed to close account: " + error.message);
             });
       }
@@ -173,24 +172,13 @@ export default {
     updateUserDetails() {
       const iban = this.selectedUser.iban;
 
-      // First request to update absolute limit
-      const absoluteLimitRequest = axiosInstance.put(`/accounts/${iban}/limit`, {
-        absoluteLimit: this.selectedUser.absoluteLimit
-      });
-
-      // Second request to update day limit
-      const dayLimitRequest = axiosInstance.put(`/users/${this.selectedUser.customer.id}/limits`, {
-        dayLimit: this.selectedUser.customer.dayLimit
-      });
-
-      // Execute the first request, then the second
-      absoluteLimitRequest
+      updateAbsoluteLimit(iban, this.selectedUser.absoluteLimit)
           .then(response => {
-            return dayLimitRequest;
+            return updateDayLimit(this.selectedUser.customer.id, this.selectedUser.customer.dayLimit);
           })
           .then(response => {
             alert("User details updated successfully!");
-            this.fetchAccountsAndTransactions();
+            this.loadAccountsAndTransactions();
           })
           .catch(error => {
             console.error("Failed to update user details:", error);
@@ -210,9 +198,8 @@ export default {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     filterAccounts() {
-      this.fetchAccountsAndTransactions();
-    },
-
+      this.loadAccountsAndTransactions();
+    }
   }
 };
 </script>
