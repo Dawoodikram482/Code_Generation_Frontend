@@ -111,23 +111,28 @@
 </template>
 
 <script>
-import axiosInstance from '/axios.js';
-import axios from 'axios';
+import { useAccountsOverviewStore } from '../stores/accoountsOverview.js';
+import { computed } from 'vue';
 
 export default {
   data() {
     return {
-      accounts: [],
-      transactions: [],
       selectedUser: null,
       transactionData: null,
-      loading: true,
-      error: null,
       selectedRole: ''
     };
   },
-  created() {
-    this.fetchAccountsAndTransactions();
+  setup() {
+    const store = useAccountsOverviewStore();
+    store.fetchAccountsAndTransactions();
+
+    return {
+      store,
+      accounts: computed(() => store.accounts),
+      transactions: computed(() => store.transactions),
+      loading: computed(() => store.loading),
+      error: computed(() => store.error)
+    };
   },
   computed: {
     filteredAccounts() {
@@ -139,63 +144,13 @@ export default {
     }
   },
   methods: {
-    fetchAccountsAndTransactions() {
-      axios.all([
-        axiosInstance.get('/accounts/status', { params: { limit: 50, offset: 0 } }),
-        axiosInstance.get('/transactions')
-      ])
-          .then(axios.spread((accountsResponse, transactionsResponse) => {
-            this.accounts = accountsResponse.data;
-            this.transactions = transactionsResponse.data;
-            this.loading = false;
-          }))
-          .catch(error => {
-            this.error = error.message;
-            this.loading = false;
-          });
-    },
     closeAccount(iban) {
       if (confirm("Are you sure you want to close this account?")) {
-        axiosInstance.post(`/accounts/closeAccount/${iban}`)
-            .then(response => {
-              // Handle successful account closure
-              alert("Account closed successfully!");
-              this.selectedUser = null;
-              // Reload accounts after closure
-              this.fetchAccountsAndTransactions();
-            })
-            .catch(error => {
-              // Handle error
-              alert("Failed to close account: " + error.message);
-            });
+        this.store.closeAccount(iban);
       }
     },
     updateUserDetails() {
-      const iban = this.selectedUser.iban;
-
-      // First request to update absolute limit
-      const absoluteLimitRequest = axiosInstance.put(`/accounts/${iban}/limit`, {
-        absoluteLimit: this.selectedUser.absoluteLimit
-      });
-
-      // Second request to update day limit
-      const dayLimitRequest = axiosInstance.put(`/users/${this.selectedUser.customer.id}/limits`, {
-        dayLimit: this.selectedUser.customer.dayLimit
-      });
-
-      // Execute the first request, then the second
-      absoluteLimitRequest
-          .then(response => {
-            return dayLimitRequest;
-          })
-          .then(response => {
-            alert("User details updated successfully!");
-            this.fetchAccountsAndTransactions();
-          })
-          .catch(error => {
-            console.error("Failed to update user details:", error);
-            alert("Failed to update user details: " + error.message);
-          });
+      this.store.updateUserDetails(this.selectedUser);
     },
     showUserDetails(account) {
       this.selectedUser = account;
@@ -210,12 +165,12 @@ export default {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     filterAccounts() {
-      this.fetchAccountsAndTransactions();
-    },
-
+      this.store.fetchAccountsAndTransactions();
+    }
   }
 };
 </script>
+
 
 
 <style scoped>

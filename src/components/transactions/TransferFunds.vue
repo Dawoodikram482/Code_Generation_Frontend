@@ -2,13 +2,13 @@
   <div class="transfer-funds">
     <div class="transfer-funds-form">
       <h2>Transfer Funds</h2>
-      <form @submit.prevent="submitTransfer">
+      <form @submit.prevent="handleTransfer">
         <!-- Source Account -->
         <div class="form-group">
           <label for="source-account">Source Account:</label>
           <select id="source-account" v-model="selectedSourceAccount" class="form-control">
             <option value="" disabled>Select source account</option>
-            <option v-for="account in accounts" :key="account.iban" :value="account.iban">
+            <option v-for="account in sourceAccount" :key="account.iban" :value="account.iban">
               {{ account.customer?.firstName }} {{ account.customer?.lastName }} - {{ account.iban }}
             </option>
           </select>
@@ -19,7 +19,7 @@
           <label for="destination-account">Destination Account:</label>
           <select id="destination-account" v-model="selectedDestinationAccount" class="form-control">
             <option value="" disabled>Select destination account</option>
-            <option v-for="account in accounts" :key="account.iban" :value="account.iban">
+            <option v-for="account in destinationAccount" :key="account.iban" :value="account.iban">
               {{ account.customer?.firstName }} {{ account.customer?.lastName }} - {{ account.iban }}
             </option>
           </select>
@@ -45,83 +45,67 @@
   </div>
 </template>
 
-
 <script>
-import instance from "../../../axios.js";
-import {Notify} from "quasar";
-import {useAccountStore} from "@/stores/account.js";
+import { Notify } from "quasar";
+import { useAccountsStore, useTransactionsStore } from "@/stores/storeForEmployee.js";
+import { computed, onMounted, ref } from "vue";
+import router from "@/router/index.js";
 
 export default {
-  data() {
-    return {
-      transaction: {
-        selectedSourceAccount: '', // Define selectedSourceAccount
-        selectedDestinationAccount: '', // Define selectedDestinationAccount
-        transferAmount: null
-      },
-      accounts: [],
-      loading: false, // Add loading variable
-      errorMessage: null // Add errorMessage variable
-    };
-  },
-  created() {
-    this.fetchAccounts();
-  },
-  methods: {
-    async fetchAccounts() {
-      this.loading = true;
-      const AccountStore = useAccountStore();
+  setup() {
+    const accountsStore = useAccountsStore();
+    const transactionStore = useTransactionsStore();
+    const sourceAccount = computed(() => accountsStore.accounts);
+    const destinationAccount = computed(() => accountsStore.accounts);
+
+    const selectedSourceAccount = ref('');
+    const selectedDestinationAccount = ref('');
+    const transferAmount = ref('');
+    const loading = ref(false);
+    const errorMessage = ref('');
+
+    onMounted(async () => {
+      await accountsStore.fetchAccounts();
+    });
+
+    const handleTransfer = async () => {
+      loading.value = true;
+      errorMessage.value = '';
+
       try {
-        await AccountStore.getActiveAccounts();
-        this.accounts = AccountStore.accounts;
+        const result = await transactionStore.submitTransfer({
+          selectedSourceAccount: selectedSourceAccount.value,
+          selectedDestinationAccount: selectedDestinationAccount.value,
+          transferAmount: transferAmount.value
+        });
+
+        if (result.success) {
+          // Reset form fields
+          selectedSourceAccount.value = '';
+          selectedDestinationAccount.value = '';
+          transferAmount.value = '';
+        }
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'An error occurred while fetching accounts.';
+        errorMessage.value = error.response?.data?.message || 'An error occurred while processing your request.';
+      } finally {
+        loading.value = false;
       }
-    },
-    submitTransfer() {
-      this.loading = true;
-      this.errorMessage = null; // Clear any previous error messages
-      
-      // instance.post('/transactions', {
-      //   accountFrom: this.selectedSourceAccount,
-      //   accountTo: this.selectedDestinationAccount,
-      //   amount: this.transferAmount
-      // }).then(response => {
-      //   this.loading = false;
-      //   // Reset form fields
-      //   this.selectedSourceAccount = '';
-      //   this.selectedDestinationAccount = '';
-      //   this.transferAmount = null;
-      //   // Show success notification
-      //   this.showSuccessNotification('Transfer successful!');
-      // }).catch(error => {
-      //   this.loading = false;
-      //   this.errorMessage = error.errorMessage;
-      //   if (error.response && error.response.status === 400) {
-      //     this.showErrorNotification('The amount you are trying to transfer will result in a balance lower than the absolute limit for this account.');
-      //   } else {
-      //     this.errorMessage = error.response?.data?.message || 'An error occurred while processing your request.';
-      //   }
-      // });
-    },
-    showSuccessNotification(message) {
-      Notify.create({
-        color: 'positive',
-        position: 'top',
-        message: message
-      });
-    },
-    showErrorNotification(errorMessage) {
-      Notify.create({
-        color: 'negative',
-        position: 'top',
-        message: errorMessage,
-        icon: ''
-      });
-    },
+    };
+
+    return {
+      sourceAccount,
+      destinationAccount,
+      selectedSourceAccount,
+      selectedDestinationAccount,
+      transferAmount,
+      loading,
+      errorMessage,
+      handleTransfer
+    };
   }
 }
 </script>
+
 
 <style scoped>
 h2 {
@@ -132,12 +116,9 @@ h2 {
 .transfer-funds-form {
   padding-top: 50px;
   width: 700px;
-
-
 }
 
 .form-group {
   padding: 20px 0 20px 20px;
 }
-
 </style>
