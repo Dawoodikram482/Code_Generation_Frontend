@@ -111,28 +111,28 @@
 </template>
 
 <script>
-import {
-  fetchAccountsAndTransactions,
-  closeAccount,
-  updateAbsoluteLimit,
-  updateDayLimit
-} from '../stores/accoountsOverview.js';
-import axios from "axios";
+import { useAccountsOverviewStore } from '../stores/accoountsOverview.js';
+import { computed } from 'vue';
 
 export default {
   data() {
     return {
-      accounts: [],
-      transactions: [],
       selectedUser: null,
       transactionData: null,
-      loading: true,
-      error: null,
       selectedRole: ''
     };
   },
-  created() {
-    this.loadAccountsAndTransactions();
+  setup() {
+    const store = useAccountsOverviewStore();
+    store.fetchAccountsAndTransactions();
+
+    return {
+      store,
+      accounts: computed(() => store.accounts),
+      transactions: computed(() => store.transactions),
+      loading: computed(() => store.loading),
+      error: computed(() => store.error)
+    };
   },
   computed: {
     filteredAccounts() {
@@ -144,46 +144,13 @@ export default {
     }
   },
   methods: {
-    loadAccountsAndTransactions() {
-      fetchAccountsAndTransactions()
-          .then(axios.spread((accountsResponse, transactionsResponse) => {
-            this.accounts = accountsResponse.data;
-            this.transactions = transactionsResponse.data;
-            this.loading = false;
-          }))
-          .catch(error => {
-            this.error = error.message;
-            this.loading = false;
-          });
-    },
     closeAccount(iban) {
       if (confirm("Are you sure you want to close this account?")) {
-        closeAccount(iban)
-            .then(response => {
-              alert("Account closed successfully!");
-              this.selectedUser = null;
-              this.loadAccountsAndTransactions();
-            })
-            .catch(error => {
-              alert("Failed to close account: " + error.message);
-            });
+        this.store.closeAccount(iban);
       }
     },
     updateUserDetails() {
-      const iban = this.selectedUser.iban;
-
-      updateAbsoluteLimit(iban, this.selectedUser.absoluteLimit)
-          .then(response => {
-            return updateDayLimit(this.selectedUser.customer.id, this.selectedUser.customer.dayLimit);
-          })
-          .then(response => {
-            alert("User details updated successfully!");
-            this.loadAccountsAndTransactions();
-          })
-          .catch(error => {
-            console.error("Failed to update user details:", error);
-            alert("Failed to update user details: " + error.message);
-          });
+      this.store.updateUserDetails(this.selectedUser);
     },
     showUserDetails(account) {
       this.selectedUser = account;
@@ -198,11 +165,12 @@ export default {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     },
     filterAccounts() {
-      this.loadAccountsAndTransactions();
+      this.store.fetchAccountsAndTransactions();
     }
   }
 };
 </script>
+
 
 
 <style scoped>
