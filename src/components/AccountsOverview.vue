@@ -147,6 +147,8 @@ export default {
     closeAccount(iban) {
       if (confirm("Are you sure you want to close this account?")) {
         this.store.closeAccount(iban);
+        this.selectedUser = null;
+        this.store.fetchAccountsAndTransactions();
       }
     },
     updateUserDetails() {

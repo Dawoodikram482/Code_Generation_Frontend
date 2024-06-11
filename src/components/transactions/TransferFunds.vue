@@ -9,7 +9,7 @@
           <select id="source-account" v-model="selectedSourceAccount" class="form-control">
             <option value="" disabled>Select source account</option>
             <option v-for="account in sourceAccount" :key="account.iban" :value="account.iban">
-              {{ account.customer?.firstName }} {{ account.customer?.lastName }} - {{ account.iban }}
+              {{ account.customer?.firstName }} {{ account.customer?.lastName }} - {{ account.iban }} - €{{account.accountBalance}}
             </option>
           </select>
         </div>
@@ -20,7 +20,7 @@
           <select id="destination-account" v-model="selectedDestinationAccount" class="form-control">
             <option value="" disabled>Select destination account</option>
             <option v-for="account in destinationAccount" :key="account.iban" :value="account.iban">
-              {{ account.customer?.firstName }} {{ account.customer?.lastName }} - {{ account.iban }}
+              {{ account.customer?.firstName }} {{ account.customer?.lastName }} - {{ account.iban }} - €{{account.accountBalance}}
             </option>
           </select>
         </div>
